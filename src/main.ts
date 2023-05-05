@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import router from './router/router';
 import './style.css'
 import App from './App.vue'
 import { initializeApp } from "firebase/app";
@@ -9,4 +10,4 @@ import { firebaseConfig } from './firebase/config';
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-createApp(App).mount('#app')
+createApp(App).use(router).mount('#app')
