@@ -154,35 +154,10 @@ export const usePostsStore = defineStore("firestore", () => {
         );
     }
 
-    async function likePost(postID: string): Promise<boolean> {
-        const postRef = doc(db, "posts", postID);
-        const likes = arrayUnion(userStore.userProfile!!.uid);
-        try {
-            await updateDoc(postRef, "likes", likes);
-            return true;
-        } catch (e) {
-            console.error(e);
-            return false;
-        }
-    }
-
-    async function dislikePost(postID: string): Promise<boolean> {
-        const postRef = doc(db, "posts", postID);
-        const likes = arrayRemove(userStore.userProfile!!.uid);
-        try {
-            await updateDoc(postRef, "likes", likes);
-            return true;
-        } catch (e) {
-            console.error(e);
-            return false;
-        }
-    }
 
     return {
         createPost,
         getPosts,
         getUserPosts,
-        likePost,
-        dislikePost,
     };
 });
