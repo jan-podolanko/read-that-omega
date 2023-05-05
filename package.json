@@ -9,9 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueuse/core": "^10.1.2",
     "firebase": "^9.21.0",
+    "pinia": "^2.0.35",
+    "vite-plugin-pwa": "^0.14.7",
     "vue": "^3.2.47",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
