@@ -2,15 +2,26 @@
     import BottomNavigation from "../components/BottomNavigation.vue";
     import { useRegisterSW } from "virtual:pwa-register/vue";
     import { useRouter } from "vue-router";
+    import { useUserStore } from "../stores/user";
+    import { watch } from "vue";
 
     useRegisterSW();
  
     const router = useRouter();
+    const userStore = useUserStore();
 
+    watch(
+        () => userStore.isUserSignedIn,
+        isSignedIn => {
+            if (!isSignedIn) {
+                router.replace({ name: "SignIn" });
+            }
+        }
+    );
 </script>
 
 <template>
-    <div id="app-container">
+    <div id="app-container" v-if="userStore.isUserSignedIn !== null">
         <header>
             <img src="/favicon.ico" alt="" />
             <span>ReadThat</span>
@@ -18,7 +29,7 @@
         <div id="screen">
             <router-view />
         </div>
-        <BottomNavigation />
+        <BottomNavigation v-if="userStore.isUserSignedIn === true" />
     </div>
 </template>
 
