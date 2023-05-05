@@ -2,11 +2,11 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { firebaseConfig } from './firebase/config';
-
+import router from './router/router';
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const firebaseApp = initializeApp(firebaseConfig);
 
-createApp(App).mount('#app')
+const app = createApp(App)
+app.use(router)
+app.mount('#app')
