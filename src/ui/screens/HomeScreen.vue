@@ -10,6 +10,26 @@
         posts: [],
     });
 
+    onBeforeMount(() => {
+        postsStore.getPosts().then(posts => {
+            console.log(posts);
+            state.posts = posts;
+        });
+    });
+
+    async function likePost(post: Post) {
+        if (post.didUserLike) {
+            if (await postsStore.dislikePost(post.id)) {
+                post.likeAmount--;
+                post.didUserLike = false;
+            }
+        } else {
+            if (await postsStore.likePost(post.id)) {
+                post.likeAmount++;
+                post.didUserLike = true;
+            }
+        }
+    }
 </script>
 
 <template>
