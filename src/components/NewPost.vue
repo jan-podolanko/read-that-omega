@@ -76,11 +76,11 @@
                 </div>
             </div>
             <section id="post-body-container">
-                <TextField
+                <textarea
                     placeholder="Type what you are thinking about…"
                     v-model.trim="post.body"
                     maxlength="400"
-                ></TextField>
+                ></textarea>
             </section>
             <section id="button-row">
                 <div style="flex-grow: 1"></div>
@@ -113,6 +113,10 @@
         padding: 0.5rem;
         cursor: pointer;
     }
+    main {
+                border-radius: 8px;
+        box-shadow: 0 0 10px 5px rgba(black, 0.1);
+    }
     form {
         display: flex;
         flex-direction: column;
@@ -143,15 +147,6 @@
         max-width: 100%;
         border: solid 2px black;
     }
-    #post-image-location-bar {
-        display: flex;
-        padding: 1rem;
-        align-items: center;
-        gap: 1rem;
-        > section {
-            display: flex;
-        }
-    }
     #post-body-actions {
         border-radius: inherit;
         display: flex;
@@ -165,8 +160,5 @@
         padding: 0 1rem;
         gap: 0.5rem;
         align-items: center;
-    }
-    #save-draft-button {
-        color: #9ec6eb;
     }
 </style>
