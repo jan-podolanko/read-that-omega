@@ -14,6 +14,7 @@ import {
     Timestamp,
     Query,
     where,
+    deleteDoc,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { defineStore } from "pinia";
@@ -52,6 +53,17 @@ export const usePostsStore = defineStore("firestore", () => {
             return true;
         } catch (e) {
             console.log(e);
+            return false;
+        }
+    }
+
+    async function deletePost(postID: string): Promise<boolean> {
+        const postRef = doc(db, "posts", postID);
+        try {
+            await deleteDoc(postRef);
+            return true;
+        } catch (e) {
+            console.error(e);
             return false;
         }
     }
@@ -184,5 +196,6 @@ export const usePostsStore = defineStore("firestore", () => {
         getUserPosts,
         likePost,
         dislikePost,
+        deletePost,
     };
 });
