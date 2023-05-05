@@ -16,12 +16,12 @@ const router = createRouter({
         {
             path: "/home",
             name: "Home",
-            component: () => import("./ui/screens/HomeScreen.vue"),
+            component: () => import("./src/ui/screens/HomeScreen.vue"),
         },
         {
             path: "/search",
             name: "Search",
-            component: () => import("./ui/screens/SearchScreen.vue"),
+            component: () => import("./src/ui/screens/SearchScreen.vue"),
         },
     ],
 });
