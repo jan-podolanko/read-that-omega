@@ -11,7 +11,8 @@
   "dependencies": {
     "firebase": "^9.21.0",
     "sass": "^1.62.1",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
