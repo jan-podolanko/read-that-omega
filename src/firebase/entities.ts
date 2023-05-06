@@ -14,3 +14,11 @@ export interface PostEntity {
     readonly likes: string[];
     readonly location: string | null;
 }
+
+export interface CommentEntity {
+    readonly uid: string;
+    readonly postid: string;
+    readonly body: string;
+    readonly timestamp: Timestamp;
+    readonly likes: string [];
+}
