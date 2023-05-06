@@ -11,7 +11,7 @@
         posts: [],
         subjects: [],
     });
-
+    const filter = ""
     onBeforeMount(() => {
         postsStore.getPosts().then(posts => {
             console.log(posts);
@@ -36,6 +36,10 @@
             }
         }
     }
+
+    function filterBySubject(subject: String){
+        return state.subjects.filter((post: { subject: String; }) => post.subject == subject)
+    }
 </script>
 
 <template>
@@ -43,7 +47,7 @@
         >Type what you are thinking about…
     </router-link>
     <main id="posts">
-        <select><option v-for="subject in state.subjects" style="color:black">{{ subject.subject }}</option></select>
+        <select><option v-for="subject in state.subjects" style="color:black" :v-model="filter">{{ subject.subject }}</option></select><button @click="filterBySubject(filter)">filter by subject</button>
         <section class="post" v-for="post in state.posts">
             <router-link :to="{ name: 'postid', params: { id: post.id } }">
             <header class="post-header">

@@ -6,6 +6,7 @@
     import { useRouter } from "vue-router";
     import TextButton from "../components/TextButton.vue";
     import { useToast } from "vue-toastification";
+    import { Comment } from "../../model/Comment";
 
     const postsStore = usePostsStore();
     const toast = useToast();
