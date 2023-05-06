@@ -1,4 +1,4 @@
-import { NewPost, Post } from "../model/Post";
+import { NewPost, Post, Comment } from "../model/Post";
 import {
     addDoc,
     arrayRemove,
@@ -20,8 +20,9 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { defineStore } from "pinia";
 import { useFirebaseStore } from "./firebase";
 import { useUserStore } from "./user";
-import { PostEntity } from "../firebase/entities";
+import { PostEntity, CommentEntity } from "../firebase/entities";
 import { User } from "../model/User";
+import { NewComment } from "../model/Comment";
 
 export const usePostsStore = defineStore("firestore", () => {
     const firebaseStore = useFirebaseStore();
@@ -30,6 +31,7 @@ export const usePostsStore = defineStore("firestore", () => {
     const storage = firebaseStore.storage;
 
     const postsCollection = collection(db, "posts");
+    const commentsCollection = collection(db, "comments")
 
     async function createPost(post: NewPost): Promise<boolean> {
         const user = userStore.userProfile;
@@ -56,6 +58,26 @@ export const usePostsStore = defineStore("firestore", () => {
             return false;
         }
     }
+
+    async function createComment(comment: NewComment): Promise<boolean> {
+        const user = userStore.userProfile;
+        if (user === null) return false;
+      
+        try {
+          const postRef = await addDoc(commentsCollection, {
+            uid: user.uid,
+            postid: comment.postid,
+            body: comment.body,
+            timestamp: Timestamp.now(),
+            likes: [],
+          } as CommentEntity);
+      
+          return true;
+        } catch (e) {
+          console.log(e);
+          return false;
+        }
+      }
 
     async function deletePost(postID: string): Promise<boolean> {
         const postRef = doc(db, "posts", postID);
@@ -107,6 +129,39 @@ export const usePostsStore = defineStore("firestore", () => {
                         imageURL,
                         location: post.location,
                     } as Post;
+                })
+            )
+        );
+    }
+
+    async function getPostComments(postid: string): Promise<Comment[]> {
+        const CommentsQuery = query(
+            commentsCollection,
+            where("postid", "==", postid),
+            orderBy("timestamp", "desc"),
+            limit(10)
+        );
+        const CommentsQuerySnapshot = await getDocs(CommentsQuery);
+
+        return Promise.all(
+            CommentsQuerySnapshot.docs.map(commentsSnapshot =>
+                runTransaction(db, async tx => {
+                    const commentSnapshot = await tx.get(commentsSnapshot.ref);
+                    const comment = commentSnapshot.data() as CommentEntity;
+                    const user = await tx
+                        .get(doc(db, "users", comment.uid))
+                        .then(userSnapshot => userSnapshot.data() as User);
+
+                    return {
+                        id: commentSnapshot.id,
+                        author: user,
+                        body: comment.body,
+                        date: new Date(comment.timestamp.seconds * 1000),
+                        likeAmount: comment.likes.length,
+                        didUserLike: comment.likes.includes(
+                            userStore.userProfile!!.uid
+                        ),
+                    } as Comment;
                 })
             )
         );
@@ -190,6 +245,30 @@ export const usePostsStore = defineStore("firestore", () => {
         }
     }
 
+    async function likeComment(commentID: string): Promise<boolean> {
+        const postRef = doc(db, "comments", commentID);
+        const likes = arrayUnion(userStore.userProfile!!.uid);
+        try {
+            await updateDoc(postRef, "likes", likes);
+            return true;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    }
+
+    async function dislikeComment(commentID: string): Promise<boolean> {
+        const postRef = doc(db, "comments", commentID);
+        const likes = arrayRemove(userStore.userProfile!!.uid);
+        try {
+            await updateDoc(postRef, "likes", likes);
+            return true;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    }
+
     return {
         createPost,
         getPosts,
@@ -197,5 +276,9 @@ export const usePostsStore = defineStore("firestore", () => {
         likePost,
         dislikePost,
         deletePost,
+        createComment,
+        getPostComments,
+        likeComment,
+        dislikeComment,
     };
 });
