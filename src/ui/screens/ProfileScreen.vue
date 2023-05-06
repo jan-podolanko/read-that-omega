@@ -155,7 +155,7 @@ const userPosts = computed(() => {
                 <img
                         class="post-author-photo"
                         :src="post.author.photoURL"
-                        alt=""
+                        :alt="post.author.displayName"
                 />
             </div>
         </section>

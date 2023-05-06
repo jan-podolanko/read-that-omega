@@ -3,18 +3,23 @@
     import { usePostsStore } from "../../stores/posts";
     import { Post } from "../../model/Post";
     import { useDateFormat } from "@vueuse/core";
+    import { useUserStore } from "../../stores/user";
 
     const postsStore = usePostsStore();
-
-    const state: { posts: Post[] } = reactive({
+    const userStore = useUserStore();
+    const state: { posts: Post[], subjects: Array<any> | null } = reactive({
         posts: [],
+        subjects: [],
     });
-
-
+    const filter= ""
     onBeforeMount(() => {
         postsStore.getPosts().then(posts => {
             console.log(posts);
             state.posts = posts;
+        });
+        userStore.getSubjects().then(subjects => {
+            console.log(subjects);
+            state.subjects = subjects;
         });
     });
 
@@ -32,12 +37,16 @@
             }
         }
     }
+
+    function filterBySubject(subject: String){
+        return state.subjects.filter((post: { subject: String; }) => post.subject == subject)
+    }
 </script>
 
 <template>
     <main id="homeScreen">
-        <header> </header>
-        <div id="posts">
+    <div id="posts">
+        <select><option v-for="subject in state.subjects" style="color:black" :v-model="filter">{{ subject.subject }}</option></select><button @click="filterBySubject(filter)">filter by subject</button>
         <section class="post" v-for="post in state.posts">
             <router-link :to="{ name: 'postid', params: { id: post.id } }">
             <header class="post-header">
@@ -78,7 +87,6 @@
                     />
                 </div>
             </section>
-        </div>
         <div id="post">
 
         </div>

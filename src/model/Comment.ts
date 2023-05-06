@@ -5,7 +5,7 @@ export interface NewComment {
     readonly body: string;
 }
 
-export interface Comments {
+export interface Comment {
     readonly id: string;
     readonly body: string;
     readonly author: User;
