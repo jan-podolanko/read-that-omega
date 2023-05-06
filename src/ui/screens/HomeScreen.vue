@@ -58,6 +58,7 @@
             <div v-if="post.imageURL !== null" class="post-image">
                 <img :src="`${post.imageURL}`" />
             </div>
+        </router-link>
             <div class="post-actions">
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     post.likeAmount
@@ -75,7 +76,6 @@
                     alt=""
                 />
             </div>
-        </router-link>
         </section>
     </main>
 </template>
