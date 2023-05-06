@@ -1,9 +1,8 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { firebaseConfig } from './firebase/config';
+import {createApp} from 'vue'
+import App from './ui/App.vue'
+import {initializeApp} from "firebase/app";
+import {getAnalytics} from "firebase/analytics";
+import {firebaseConfig} from './firebase/config';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
