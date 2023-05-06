@@ -38,6 +38,7 @@
     </router-link>
     <main id="posts">
         <section class="post" v-for="post in state.posts">
+            <router-link :to="{ name: 'postid', params: { id: post.id } }">
             <header class="post-header">
                 <div>
                     <span>{{ post.title }}</span> <br />
@@ -74,6 +75,7 @@
                     alt=""
                 />
             </div>
+        </router-link>
         </section>
     </main>
 </template>
