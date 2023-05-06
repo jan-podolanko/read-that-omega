@@ -19,24 +19,24 @@
 
 <template>
     <div id="app-container" v-if="userStore.isUserSignedIn !== null">
-        <header>
-            <img src="/favicon.ico" alt="" />
-            <span>ReadThat</span>
-        </header>
         <div id="screen">
             <router-view />
         </div>
-        <BottomNavigation v-if="userStore.isUserSignedIn === true" />
+<!--        <BottomNavigation v-if="userStore.isUserSignedIn === true" />-->
     </div>
 </template>
 
 <style lang="scss">
+
+    a {
+        text-decoration: none;
+    }
     #app {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
             Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
             "Segoe UI Symbol";
         height: 100vh;
-        background-color: $surface;
+        background: linear-gradient(to right,$surface, $gradientRight);
     }
 
     * {
@@ -48,27 +48,10 @@
         display: flex;
         flex-direction: column;
 
-        > header {
-            display: flex;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-
-            > span {
-                font-size: 1rem;
-                letter-spacing: 2px;
-                font-weight: 500;
-                color: #aaaaaa;
-            }
-
-            > img {
-                width: 25px;
-            }
-        }
-
         > #screen {
             flex-grow: 1;
             overflow: hidden;
-            padding: 1rem;
+            padding: 0 1rem 1rem 0;
             display: flex;
             flex-direction: column;
         }

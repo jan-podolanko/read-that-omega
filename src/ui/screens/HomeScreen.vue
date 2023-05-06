@@ -10,12 +10,14 @@
         posts: [],
     });
 
+
     onBeforeMount(() => {
         postsStore.getPosts().then(posts => {
             console.log(posts);
             state.posts = posts;
         });
     });
+
 
     async function likePost(post: Post) {
         if (post.didUserLike) {
@@ -33,52 +35,89 @@
 </script>
 
 <template>
-    <router-link :to="{ name: 'CreatePost' }"
-        >Type what you are thinking about…
-    </router-link>
-    <main id="posts">
-        <section class="post" v-for="post in state.posts">
-            <header class="post-header">
-                <div>
-                    <span>{{ post.title }}</span> <br />
-                    <div v-if="post.location !== null" class="location-header">
-                        <span class="material-icons"> pin_drop </span>
-                        <span>{{ post.location }}</span>
-                    </div>
-                </div>
-                <time :datetime="post.date.toISOString()"
-                    >{{ useDateFormat(post.date, "D.MM.YY").value }}<br />@
-                    {{ useDateFormat(post.date, "HH:mm").value }}
-                </time>
+    <main id="homeScreen">
+        <div id="posts">
+            <header>
+                <span>ReadThat</span>
+                <router-link :to="{ name: 'CreatePost' }" class="material-icons">add_circle</router-link>
             </header>
-            <div class="post-body">
-                <p>{{ post.body }}</p>
-            </div>
-            <div v-if="post.imageURL !== null" class="post-image">
-                <img :src="`${post.imageURL}`" />
-            </div>
-            <div class="post-actions">
+            <section class="post" v-for="post in state.posts">
+                <header class="post-header">
+                    <div>
+                        <span>{{ post.title }}</span> <br />
+                        <div v-if="post.location !== null" class="location-header">
+                            <span class="material-icons"> pin_drop </span>
+                            <span>{{ post.location }}</span>
+                        </div>
+                    </div>
+                    <time :datetime="post.date.toISOString()"
+                    >{{ useDateFormat(post.date, "D.MM.YY").value }}<br />@
+                        {{ useDateFormat(post.date, "HH:mm").value }}
+                    </time>
+                </header>
+                <div class="post-body">
+                    <p>{{ post.body }}</p>
+                </div>
+                <div v-if="post.imageURL !== null" class="post-image">
+                    <img :src="`${post.imageURL}`" />
+                </div>
+                <div class="post-actions">
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
-                    post.likeAmount
-                }}</span>
-                <span class="material-icons" @click="likePost(post)">{{
-                    post.didUserLike ? "favorite" : "favorite_outlined"
-                }}</span>
-                <div style="flex-grow: 1"></div>
-                <span class="post-author-username">{{
-                    post.author.displayName
-                }}</span>
-                <img
-                    class="post-author-photo"
-                    :src="post.author.photoURL"
-                    alt=""
-                />
-            </div>
-        </section>
+                        post.likeAmount
+                    }}</span>
+                    <span class="material-icons" @click="likePost(post)">{{
+                            post.didUserLike ? "favorite" : "favorite_outlined"
+                        }}</span>
+                    <div style="flex-grow: 1"></div>
+                    <span class="post-author-username">{{
+                            post.author.displayName
+                        }}</span>
+                    <img
+                        class="post-author-photo"
+                        :src="post.author.photoURL"
+                        alt=""
+                    />
+                </div>
+            </section>
+        </div>
+        <div id="post">
+
+        </div>
+        <div id="comments">
+
+    </div>
     </main>
 </template>
 
 <style scoped lang="scss">
+    main {
+        display: flex;
+        flex-direction: row;
+        > div{
+            flex: 1 1 30%;
+            height: 100vh;
+            overflow-y: hidden;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+            border-right: white solid;
+            > header {
+                display: flex;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+
+                > span {
+                    font-size: 1rem;
+                    letter-spacing: 2px;
+                    font-weight: 500;
+                    color: #aaaaaa;
+                }
+
+            }
+        }
+        ::-webkit-scrollbar{
+            display: none;
+        }
+    }
     a {
         background-color: $surfaceVariant;
         color: rgba($onSurfaceVariant, 0.7);
@@ -94,8 +133,7 @@
     }
 
     #posts {
-        padding: 1rem 0.5rem 2rem 0.5rem;
-        margin-top: 1rem;
+        padding: 0 0.5rem 2rem 0.5rem;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
@@ -118,7 +156,7 @@
         justify-content: space-between;
         align-items: center;
 
-        > span {
+        > div {
             font-size: 1.1rem;
             font-weight: 500;
             line-height: 1.4;
