@@ -42,6 +42,12 @@ const router = createRouter({
             name: "CreatePost",
             component: () => import("./ui/screens/CreatePostScreen.vue"),
         },
+        {
+            path: "/post/:id",
+            name: "postid",
+            component: () => import("./ui/screens/PostScreen.vue"),
+            props: true,
+        },
     ],
 });
 
