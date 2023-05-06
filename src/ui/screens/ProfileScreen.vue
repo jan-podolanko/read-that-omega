@@ -27,6 +27,14 @@
         auth.signOut().then(() => {});
     }
 
+    async function deletePostHandler(post: Post) {
+    const confirmDelete = confirm("Are you sure you want to delete this post?");
+    if (confirmDelete) {
+        if (await postsStore.deletePost(post.id)) {
+            state.posts = state.posts.filter(p => p.id !== post.id);
+        }
+    }}
+
     async function likePost(post: Post) {
         if (post.didUserLike) {
             if (await postsStore.dislikePost(post.id)) {
@@ -84,6 +92,9 @@
                 <span class="material-icons" @click="likePost(post)">{{
                     post.didUserLike ? "favorite" : "favorite_outlined"
                 }}</span>
+                <button class="delete-post-button" @click="deletePostHandler(post)">
+                <span class="material-icons">delete</span>
+                </button>
                 <div style="flex-grow: 1"></div>
                 <span class="post-author-username">{{
                     post.author.displayName
@@ -161,6 +172,19 @@
                 font-weight: 500;
                 align-content: center;
             }
+        }
+
+        .delete-post-button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            min-width: 32px;
+            max-width: 32px;
+            min-height: 32px;
+            max-height: 32px;
+            font-size: 10px;
+            cursor: pointer;
         }
 
         .post-image {
