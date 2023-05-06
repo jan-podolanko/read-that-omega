@@ -1,11 +1,12 @@
-
 <script setup lang="ts">
     defineProps<{
         value: string
     }>();
+
     const emit = defineEmits<{
         (e: "update:value", value: string): void
     }>();
+
     function onValueChange(ev: Event) {
         const el = ev.target as HTMLInputElement;
         emit("update:value", el.value);
@@ -21,11 +22,11 @@
         border-radius: 12px;
         border: none;
         padding: 0.8rem 1rem;
-        background-color: $secondaryContainer;
-        color: $onSurface;
+        background-color: $surfaceVariant;
         pointer-events: all;
+
         &:focus {
-            outline: 1px solid;
+            outline: $primary 1px solid;
         }
     }
 </style>
