@@ -2,7 +2,7 @@ import {Ref, ref} from "vue";
 import {User} from "../model/User";
 import {UserEntity} from "../firebase/entities";
 import {defineStore} from "pinia";
-import {addDoc, collection, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
 import {useFirebaseStore} from "./firebase";
 import {
     createUserWithEmailAndPassword,
@@ -42,13 +42,17 @@ export const useUserStore = defineStore("user", () => {
             });
     }
 
-    async function getSubjects(): Promise<void | undefined> {
-        const subjectSnapshot = await getDocs(collection(db, "subjects"))
+    async function getSubjects() {
+        return getDocs(collection(db, "subjects"))
             .catch(e => {
                 console.log(e);
                 return null;
             })
-        return subjectSnapshot!!.forEach((doc)=> {console.log(doc.id, "=>", doc.data())})
+            .then(snapshot => {
+                if (snapshot == null) return null;
+                console.log(snapshot.docs.map((doc) => ({...doc.data(), id:doc.id})))
+                return snapshot.docs.map((doc)=>({...doc.data(), id:doc.id}))
+            });
     }
 
     async function addSubject(subject: string): Promise<boolean> {
@@ -56,6 +60,16 @@ export const useUserStore = defineStore("user", () => {
             await addDoc(collection(db, "subjects"), {
                 subject: subject
             });
+            return true;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
+
+    async function deleteSubject(subject: string): Promise<boolean> {
+        try {
+            await deleteDoc(doc(db, "subjects", subject));
             return true;
         } catch (e) {
             console.log(e);
@@ -157,6 +171,7 @@ export const useUserStore = defineStore("user", () => {
         signUpWithEmail,
         userProfile,
         addSubject,
-        getSubjects
+        getSubjects,
+        deleteSubject,
     };
 });
