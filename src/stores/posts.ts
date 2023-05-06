@@ -42,6 +42,7 @@ export const usePostsStore = defineStore("firestore", () => {
                 timestamp: Timestamp.now(),
                 likes: [],
                 location: post.location,
+                subject: post.subject
             } as PostEntity);
 
             if (post.image == null) return true;
@@ -148,6 +149,7 @@ export const usePostsStore = defineStore("firestore", () => {
                         ),
                         imageURL,
                         location: post.location,
+                        subject: post.subject
                     } as Post;
                 })
             )

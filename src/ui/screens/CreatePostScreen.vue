@@ -12,6 +12,7 @@
     const postStore = usePostsStore();
 
     const post: {
+        subject: string;
         title: string;
         body: string;
         image: File | null;
@@ -21,6 +22,7 @@
         body: "",
         image: null,
         location: null,
+        subject: ""
     });
 
     const imgURL = computed(() => {
@@ -47,6 +49,7 @@
             body,
             image: post.image,
             location: post.location,
+            subject: post.subject
         });
 
         if (isSuccess) {

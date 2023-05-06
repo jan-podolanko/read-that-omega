@@ -1,9 +1,9 @@
-import { Ref, ref } from "vue";
-import { User } from "../model/User";
-import { UserEntity } from "../firebase/entities";
-import { defineStore } from "pinia";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useFirebaseStore } from "./firebase";
+import {Ref, ref} from "vue";
+import {User} from "../model/User";
+import {UserEntity} from "../firebase/entities";
+import {defineStore} from "pinia";
+import {addDoc, collection, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
+import {useFirebaseStore} from "./firebase";
 import {
     createUserWithEmailAndPassword,
     GithubAuthProvider,
@@ -12,6 +12,9 @@ import {
     signInWithPopup,
     updateProfile,
 } from "firebase/auth";
+import firebase from "firebase/compat";
+import DocumentData = firebase.firestore.DocumentData;
+import QuerySnapshot = firebase.firestore.QuerySnapshot;
 
 export type AuthProvider = "google" | "github";
 
@@ -39,6 +42,27 @@ export const useUserStore = defineStore("user", () => {
             });
     }
 
+    async function getSubjects(): Promise<void | undefined> {
+        const subjectSnapshot = await getDocs(collection(db, "subjects"))
+            .catch(e => {
+                console.log(e);
+                return null;
+            })
+        return subjectSnapshot!!.forEach((doc)=> {console.log(doc.id, "=>", doc.data())})
+    }
+
+    async function addSubject(subject: string): Promise<boolean> {
+        try {
+            await addDoc(collection(db, "subjects"), {
+                subject: subject
+            });
+            return true;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
+
     async function signUpWithEmail(
         email: string,
         nickname: string,
@@ -61,6 +85,7 @@ export const useUserStore = defineStore("user", () => {
                 displayName: nickname,
                 photoURL:
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/150px-Placeholder_no_text.svg.png",
+                admin: false
             } as UserEntity);
 
             return true;
@@ -84,6 +109,7 @@ export const useUserStore = defineStore("user", () => {
                 uid: user.uid,
                 displayName: user.displayName,
                 photoURL: user.photoURL,
+                admin: false
             } as UserEntity);
 
             return true;
@@ -113,7 +139,7 @@ export const useUserStore = defineStore("user", () => {
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
                 displayName: user.displayName,
-                photoURL: user.photoURL,
+                photoURL: user.photoURL
             } as UserEntity);
 
             return true;
@@ -130,5 +156,7 @@ export const useUserStore = defineStore("user", () => {
         signInWithProvider,
         signUpWithEmail,
         userProfile,
+        addSubject,
+        getSubjects
     };
 });
