@@ -36,32 +36,31 @@
 
 <template>
     <main id="homeScreen">
+        <header> </header>
         <div id="posts">
-            <header>
-                <span>ReadThat</span>
-                <router-link :to="{ name: 'CreatePost' }" class="material-icons">add_circle</router-link>
-            </header>
-            <section class="post" v-for="post in state.posts">
-                <header class="post-header">
-                    <div>
-                        <span>{{ post.title }}</span> <br />
-                        <div v-if="post.location !== null" class="location-header">
-                            <span class="material-icons"> pin_drop </span>
-                            <span>{{ post.location }}</span>
-                        </div>
+        <section class="post" v-for="post in state.posts">
+            <router-link :to="{ name: 'postid', params: { id: post.id } }">
+            <header class="post-header">
+                <div>
+                    <span>{{ post.title }}</span> <br />
+                    <div v-if="post.location !== null" class="location-header">
+                        <span class="material-icons"> pin_drop </span>
+                        <span>{{ post.location }}</span>
                     </div>
-                    <time :datetime="post.date.toISOString()"
+                </div>
+                <time :datetime="post.date.toISOString()"
                     >{{ useDateFormat(post.date, "D.MM.YY").value }}<br />@
-                        {{ useDateFormat(post.date, "HH:mm").value }}
-                    </time>
-                </header>
-                <div class="post-body">
-                    <p>{{ post.body }}</p>
-                </div>
-                <div v-if="post.imageURL !== null" class="post-image">
-                    <img :src="`${post.imageURL}`" />
-                </div>
-                <div class="post-actions">
+                    {{ useDateFormat(post.date, "HH:mm").value }}
+                </time>
+            </header>
+            </router-link>
+            <div class="post-body">
+                <p>{{ post.body }}</p>
+            </div>
+            <div v-if="post.imageURL !== null" class="post-image">
+                <img :src="`${post.imageURL}`" />
+            </div>
+            <div class="post-actions">
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                         post.likeAmount
                     }}</span>

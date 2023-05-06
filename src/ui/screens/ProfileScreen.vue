@@ -7,6 +7,7 @@ import {Post} from "../../model/Post";
 import {useDateFormat} from "@vueuse/core";
 import {useUserStore} from "../../stores/user";
 import TextButton from "../components/TextButton.vue";
+import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
 
@@ -15,15 +16,20 @@ onBeforeMount(() => {
         console.log(posts);
         state.posts = posts;
     });
+    userStore.getSubjects().then(subjects => {
+      state.subjects = subjects
+    });
 });
 const postsStore = usePostsStore();
 
-const state: { posts: Post[] } = reactive({
+const state: { posts: Post[], subjects: Array<any> | any} = reactive({
     posts: [],
+    subjects: []
 });
 
 const auth = getAuth();
 const user = auth.currentUser;
+const router = useRouter();
 
 const subjectAddition = reactive({subject: ""});
 
@@ -59,7 +65,18 @@ async function getSubjects() {
 
 async function addSubject() {
     try {
-        userStore.addSubject(subjectAddition.subject);
+        userStore.addSubject(subjectAddition.subject).then(()=>router.go(0));
+        return true;
+    }
+    catch (e) {
+        console.log(e);
+        return false;
+    }
+}
+
+async function deleteSubject(id: string) {
+    try {
+        userStore.deleteSubject(id).then(()=>router.go(0));
         return true;
     }
     catch (e) {
@@ -84,7 +101,6 @@ const userPosts = computed(() => {
             <span>{{ user?.email }}</span
             ><br/>
             <button @click="signOutHandler">sign out</button>
-            <button @click="addSubject">add subject</button>
             <form action="#" @submit.prevent="addSubject">
                 <label for="Subject">Subject</label>
                 <TextField
@@ -95,7 +111,12 @@ const userPosts = computed(() => {
                 />
                 <TextButton>Add subject</TextButton>
             </form>
-            <button @click="()=>getSubjects()"> Get subjects</button>
+            <div v-for="subject in state.subjects">
+              <div class="subject-name">
+                <div > {{ subject.subject }}</div> 
+                <span class="material-icons" @click="deleteSubject(subject.id)">delete</span>
+              </div>
+            </div>
         </section>
         <section class="post" v-for="post in userPosts">
             <header class="post-header">
@@ -217,7 +238,30 @@ a {
       align-content: center;
     }
   }
+  .subject-name {
+    border-radius: 8px;
+    box-shadow: 0 0 10px 5px rgba(black, 0.1);
+    background-color: $surfaceVariant;
+    padding: 0.5rem 0.7rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 10px;
 
+    > div {
+      flex: 8;
+    }
+
+    > span {
+      font-weight: 500;
+      flex: 1;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+  }
   .post-image {
     display: flex;
     width: fit-content;
