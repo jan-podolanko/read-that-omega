@@ -3,17 +3,23 @@
     import { usePostsStore } from "../../stores/posts";
     import { Post } from "../../model/Post";
     import { useDateFormat } from "@vueuse/core";
+    import { useUserStore } from "../../stores/user";
 
     const postsStore = usePostsStore();
-
-    const state: { posts: Post[] } = reactive({
+    const userStore = useUserStore();
+    const state: { posts: Post[], subjects: Array<any> | null } = reactive({
         posts: [],
+        subjects: [],
     });
 
     onBeforeMount(() => {
         postsStore.getPosts().then(posts => {
             console.log(posts);
             state.posts = posts;
+        });
+        userStore.getSubjects().then(subjects => {
+            console.log(subjects);
+            state.subjects = subjects;
         });
     });
 
@@ -37,6 +43,7 @@
         >Type what you are thinking about…
     </router-link>
     <main id="posts">
+        <select><option v-for="subject in state.subjects" style="color:black">{{ subject.subject }}</option></select>
         <section class="post" v-for="post in state.posts">
             <header class="post-header">
                 <div>
