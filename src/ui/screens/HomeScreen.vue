@@ -23,19 +23,20 @@
         });
     });
 
-    async function likePost(post: Post) {
-        if (post.didUserLike) {
-            if (await postsStore.dislikePost(post.id)) {
-                post.likeAmount--;
-                post.didUserLike = false;
-            }
-        } else {
-            if (await postsStore.likePost(post.id)) {
-                post.likeAmount++;
-                post.didUserLike = true;
-            }
+
+async function likePost(post: Post) {
+    if (post.didUserLike) {
+        if (await postsStore.dislikePost(post.id)) {
+            post.likeAmount--;
+            post.didUserLike = false;
+        }
+    } else {
+        if (await postsStore.likePost(post.id)) {
+            post.likeAmount++;
+            post.didUserLike = true;
         }
     }
+}
 
     const filteredPosts = computed(() => {
         return state.posts?.filter((post: { subject: String; }) => post.subject == filter.value)
@@ -76,109 +77,147 @@
             <div class="post-actions">
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     post.likeAmount
-                }}</span>
-                <span class="material-icons" @click="likePost(post)">{{
-                    post.didUserLike ? "favorite" : "favorite_outlined"
-                }}</span>
-                <div style="flex-grow: 1"></div>
-                <span class="post-author-username">{{
-                    post.author.displayName
-                }}</span>
-                <img
-                    class="post-author-photo"
-                    :src="post.author.photoURL"
-                    alt=""
-                />
-            </div>
-        </section>
+                    }}</span>
+                    <span class="material-icons" @click="likePost(post)">{{
+                        post.didUserLike ? "favorite" : "favorite_outlined"
+                        }}</span>
+                    <div style="flex-grow: 1"></div>
+                    <span class="post-author-username">{{
+                        post.author.displayName
+                        }}</span>
+                    <img
+                            class="post-author-photo"
+                            :src="post.author.photoURL"
+                            alt=""
+                    />
+                </div>
+            </section>
+        </div>
+        <div id="post">
+
+        </div>
+        <div id="comments">
+        </div>
     </main>
 </template>
 
 <style scoped lang="scss">
-    a {
-        background-color: $surfaceVariant;
-        color: rgba($onSurfaceVariant, 0.7);
-        border: none;
-        border-radius: 24px;
-        padding: 1rem;
-        text-decoration: none;
-        font-size: 0.8rem;
+main {
+  display: flex;
+  flex-direction: row;
 
-        &:hover {
-            cursor: pointer;
-        }
+  > div {
+    flex: 1 1 30%;
+    height: 100vh;
+    overflow-y: hidden;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    border-right: white solid;
+
+    > header {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+
+      > span {
+        font-size: 1rem;
+        letter-spacing: 2px;
+        font-weight: 500;
+        color: #aaaaaa;
+      }
+
     }
+  }
 
-    #posts {
-        padding: 1rem 0.5rem 2rem 0.5rem;
-        margin-top: 1rem;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-    }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
 
-    .post {
-        border-radius: 8px;
-        box-shadow: 0 0 10px 5px rgba(black, 0.1);
-        background-color: $surfaceVariant;
-        padding: 0.5rem 0.7rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        overflow-wrap: break-word;
-    }
+a {
+  background-color: $surfaceVariant;
+  color: rgba($onSurfaceVariant, 0.7);
+  border: none;
+  border-radius: 24px;
+  padding: 1rem;
+  text-decoration: none;
+  font-size: 0.8rem;
 
-    .post-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+  &:hover {
+    cursor: pointer;
+  }
+}
 
-        > span {
-            font-size: 1.1rem;
-            font-weight: 500;
-            line-height: 1.4;
-        }
+#posts {
+  padding: 0 0.5rem 2rem 0.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
-        > time {
-            font-size: 0.7rem;
-            line-height: 1.2;
-            opacity: 0.75;
-            text-align: end;
-            font-style: italic;
-        }
-    }
+.post {
+  border-radius: 8px;
+  box-shadow: 0 0 10px 5px rgba(black, 0.1);
+  background-color: $surfaceVariant;
+  padding: 0.5rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-wrap: break-word;
+}
 
-    .location-header {
-        display: flex;
-        align-items: center;
-        gap: 0.1rem;
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-        > span {
-            font-size: 0.6rem;
-            font-weight: 500;
-            align-content: center;
-        }
-    }
+  > div {
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
 
-    .post-image {
-        display: flex;
-        width: fit-content;
-        object-fit: cover;
-    }
-    .post-actions {
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
+  > time {
+    font-size: 0.7rem;
+    line-height: 1.2;
+    opacity: 0.75;
+    text-align: end;
+    font-style: italic;
+  }
+}
 
-        .material-icons {
-            font-size: 20px;
-        }
+.location-header {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
 
-        .post-author-username {
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
+  > span {
+    font-size: 0.6rem;
+    font-weight: 500;
+    align-content: center;
+  }
+}
+
+.post-image {
+  display: flex;
+  width: fit-content;
+  object-fit: cover;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+
+  .material-icons {
+    font-size: 20px;
+  }
+
+  .post-author-username {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+  }
 
         .post-author-photo {
             min-width: 24px;
