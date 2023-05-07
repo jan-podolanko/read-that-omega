@@ -129,6 +129,7 @@ export const usePostsStore = defineStore("firestore", () => {
                         ),
                         imageURL,
                         location: post.location,
+                        subject: post.subject,
                     } as Post;
                 })
             )
