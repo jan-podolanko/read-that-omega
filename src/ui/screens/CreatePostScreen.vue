@@ -250,4 +250,10 @@
     #save-draft-button {
         color: #9ec6eb;
     }
+
+    #subject-filter {
+        background-color: $surfaceVariant;
+        border-radius: 6px;
+        margin-top: 10px;
+    }
 </style>

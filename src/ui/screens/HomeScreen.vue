@@ -57,14 +57,14 @@ const filteredPosts = computed(() => {
             <header class="mainHeader">
                 <h2> ReadThat</h2>
                 <div id="icons">
-                    <router-link to="Settings">
+                    <router-link to="settings">
                         <span class="material-icons">settings</span>
                     </router-link>
-                    <router-link to="Search">
+                    <router-link to="search">
                         <span class="material-icons">search</span>
                     </router-link>
                     <span class="material-icons" @click="signOutHandler">logout</span>
-                    <router-link to="CreatePost">
+                    <router-link to="createpost">
                         <span class="material-icons">add_circle</span>
                     </router-link>
                 </div>
