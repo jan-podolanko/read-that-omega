@@ -52,11 +52,13 @@ async function likePost(post: Post) {
 }
 
 const filteredPosts = computed(() => {
-  if(filter.value != ""){
-    return state.posts?.filter((post: { subject: String; }) => post.subject == filter.value).filter((post)=> post.title.toLowerCase().includes(searchTerm.value))
-  } else {
-    return state.posts.filter((post)=> post.title.toLowerCase().includes(searchTerm.value))
-  }
+    if (filter.value != "") {
+        return state.posts?.filter((post: {
+            subject: String;
+        }) => post.subject == filter.value).filter((post) => post.title.toLowerCase().includes(searchTerm.value))
+    } else {
+        return state.posts.filter((post) => post.title.toLowerCase().includes(searchTerm.value))
+    }
 })
 
 /* const currentPost2 = computed(()=> {
@@ -64,8 +66,8 @@ const filteredPosts = computed(() => {
 } )*/
 
 
-function testfunc(){
-  console.log(currentPost)
+function testfunc() {
+    console.log(currentPost)
 }
 </script>
 
@@ -75,16 +77,14 @@ function testfunc(){
             <header class="main-header">
                 <h2> ReadThat</h2>
                 <div id="icons">
-                    <router-link to="settings">
-                        <span class="material-icons">settings</span>
+                    <span class="material-icons header-icons" id="search-button" style="flex: 2" @click="()=>search = !search">search</span>
+                    <router-link to="createpost" style="flex: 4">
+                        <span class="material-icons header-icons">add_circle</span>
                     </router-link>
-                    <div id="search-button" @click="()=>search = !search">
-                        <span class="material-icons">search</span>
-                    </div>
-                    <span class="material-icons" @click="signOutHandler">logout</span>
-                    <router-link to="createpost">
-                        <span class="material-icons">add_circle</span>
+                    <router-link to="profile" style="flex: 1">
+                        <span class="material-icons header-icons">manage_accounts</span>
                     </router-link>
+                    <span class="material-icons header-icons" style="flex: 3" @click="signOutHandler">logout</span>
                 </div>
             </header>
             <TextField v-if="search" v-model:value="searchTerm"></TextField>
@@ -93,25 +93,25 @@ function testfunc(){
                 <option v-for="subject in state.subjects">{{ subject.subject }}</option>
             </select>
             <section class="post" v-for="post in filteredPosts">
-                    <header class="post-header" @click="()=>currentPost = post">
-                        <div>
-                            <span>{{ post.title }}</span> <br/>
-                            <div v-if="post.location !== null" class="location-header">
-                                <span class="material-icons"> pin_drop </span>
-                                <span>{{ post.location }}</span>
-                            </div>
+                <header class="post-header" @click="()=>currentPost = post">
+                    <div>
+                        <span>{{ post.title }}</span> <br/>
+                        <div v-if="post.location !== null" class="location-header">
+                            <span class="material-icons"> pin_drop </span>
+                            <span>{{ post.location }}</span>
                         </div>
-                        <time :datetime="post.date.toISOString()"
-                        >{{ useDateFormat(post.date, "D.MM.YY").value }}<br/>
-                            {{ useDateFormat(post.date, "HH:mm").value }}
-                        </time>
-                    </header>
-                    <div class="post-body">
-                        <p>{{ post.body }}</p>
                     </div>
-                    <div v-if="post.imageURL !== null" class="post-image">
-                        <img alt="Post image" :src="`${post.imageURL}`"/>
-                    </div>
+                    <time :datetime="post.date.toISOString()"
+                    >{{ useDateFormat(post.date, "D.MM.YY").value }}<br/>
+                        {{ useDateFormat(post.date, "HH:mm").value }}
+                    </time>
+                </header>
+                <div class="post-body">
+                    <p>{{ post.body }}</p>
+                </div>
+                <div v-if="post.imageURL !== null" class="post-image">
+                    <img alt="Post image" :src="`${post.imageURL}`"/>
+                </div>
                 <div class="post-actions">
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     post.likeAmount
@@ -133,32 +133,32 @@ function testfunc(){
         </div>
 
         <div id="post">
-          <div v-if="!currentPost">Choose a post</div>
-          <div v-else>
-            <div class="post">
-              <header class="post-header">
-                  <div>
-                      <span>{{ currentPost.title }}</span> <br/>
-                      <div v-if="currentPost.location !== null" class="location-header">
-                          <span class="material-icons"> pin_drop </span>
-                          <span>{{ currentPost.location }}</span>
-                      </div>
-                  </div>
-                  <time :datetime="currentPost.date.toISOString()"
-                  >{{ useDateFormat(currentPost.date, "D.MM.YY").value }}<br/>
-                      {{ useDateFormat(currentPost.date, "HH:mm").value }}
-                  </time>
-              </header>
-              <div class="post-body">
-                  <p>{{ currentPost.body }}</p>
-              </div>
-              <div v-if="currentPost.imageURL !== null" class="post-image">
-                  <img alt="Post image" :src="`${currentPost.imageURL}`"/>
-              </div>
+            <div v-if="!currentPost">Choose a post</div>
+            <div v-else>
+                <div class="post">
+                    <header class="post-header">
+                        <div>
+                            <span>{{ currentPost.title }}</span> <br/>
+                            <div v-if="currentPost.location !== null" class="location-header">
+                                <span class="material-icons"> pin_drop </span>
+                                <span>{{ currentPost.location }}</span>
+                            </div>
+                        </div>
+                        <time :datetime="currentPost.date.toISOString()"
+                        >{{ useDateFormat(currentPost.date, "D.MM.YY").value }}<br/>
+                            {{ useDateFormat(currentPost.date, "HH:mm").value }}
+                        </time>
+                    </header>
+                    <div class="post-body">
+                        <p>{{ currentPost.body }}</p>
+                    </div>
+                    <div v-if="currentPost.imageURL !== null" class="post-image">
+                        <img alt="Post image" :src="`${currentPost.imageURL}`"/>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-        
+
         <div id="comments">
         </div>
     </main>
@@ -181,30 +181,36 @@ main {
       display: flex;
       gap: 0.5rem;
       padding: 0.5rem 1rem;
-
-      > span {
-        font-size: 1rem;
-        letter-spacing: 2px;
-        font-weight: 500;
-        color: #aaaaaa;
-      }
-
+      flex-direction: row;
     }
   }
-    #comments {
-        border-right: none;
-    }
+
+  #comments {
+    border-right: none;
+  }
 
   ::-webkit-scrollbar {
     display: none;
   }
 }
 
-select{
-    font-weight: bold;
-    >option {
-        font-weight: bold;
+.header-icons{
+    flex-direction: row;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    font-weight: 500;
+    color: #aaaaaa;
+    &:hover{
+        cursor: pointer
     }
+}
+
+select {
+  font-weight: bold;
+
+  > option {
+    font-weight: bold;
+  }
 }
 
 .main-header {
@@ -225,7 +231,7 @@ select{
 }
 
 a {
-  padding: 0.5rem;
+  padding: 0;
 
   &:hover {
     cursor: pointer;
