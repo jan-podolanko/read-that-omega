@@ -153,7 +153,7 @@ async function changeNickname() {
     router.go()
     return true;
   }
-    errorHandler("Error occured!")
+    errorHandler("Wrong password!")
 }
 
 async function changePass() {
