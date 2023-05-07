@@ -52,30 +52,20 @@ async function likePost(post: Post) {
 }
 
 const filteredPosts = computed(() => {
-    if (filter.value != "") {
-        return state.posts?.filter((post: {
-            subject: String;
-        }) => post.subject == filter.value).filter((post) => post.title.toLowerCase().includes(searchTerm.value))
-    } else {
-        return state.posts.filter((post) => post.title.toLowerCase().includes(searchTerm.value))
-    }
+  if(filter.value != ""){
+    return state.posts?.filter((post: { subject: String; }) => post.subject == filter.value).filter((post)=> post.title.toLowerCase().includes(searchTerm.value))
+  } else {
+    return state.posts.filter((post)=> post.title.toLowerCase().includes(searchTerm.value))
+  }
 })
 
-/* const currentPost2 = computed(()=> {
-  return currentPost
-} )*/
-
-
-function testfunc() {
-    console.log(currentPost)
-}
 </script>
 
 <template>
     <main id="homescreen">
         <div id="posts">
             <header class="main-header">
-                <h2> ReadThat</h2>
+                <h2>ReadThat</h2>
                 <div id="icons">
                     <span class="material-icons header-icons" id="search-button" style="flex: 2" @click="()=>search = !search">search</span>
                     <router-link to="createpost" style="flex: 4">
@@ -133,30 +123,30 @@ function testfunc() {
         </div>
 
         <div id="post">
-            <div v-if="!currentPost">Choose a post</div>
-            <div v-else>
-                <div class="post">
-                    <header class="post-header">
-                        <div>
-                            <span>{{ currentPost.title }}</span> <br/>
-                            <div v-if="currentPost.location !== null" class="location-header">
-                                <span class="material-icons"> pin_drop </span>
-                                <span>{{ currentPost.location }}</span>
-                            </div>
-                        </div>
-                        <time :datetime="currentPost.date.toISOString()"
-                        >{{ useDateFormat(currentPost.date, "D.MM.YY").value }}<br/>
-                            {{ useDateFormat(currentPost.date, "HH:mm").value }}
-                        </time>
-                    </header>
-                    <div class="post-body">
-                        <p>{{ currentPost.body }}</p>
-                    </div>
-                    <div v-if="currentPost.imageURL !== null" class="post-image">
-                        <img alt="Post image" :src="`${currentPost.imageURL}`"/>
-                    </div>
-                </div>
+          <h2 style="text-align: center; margin-top: 10px;" v-if="!currentPost">Choose a post</h2>
+          <div v-else>
+            <div class="post selected-post">
+              <header class="post-header">
+                  <div>
+                      <span>{{ currentPost.title }}</span> <br/>
+                      <div v-if="currentPost.location !== null" class="location-header">
+                          <span class="material-icons"> pin_drop </span>
+                          <span>{{ currentPost.location }}</span>
+                      </div>
+                  </div>
+                  <time :datetime="currentPost.date.toISOString()"
+                  >{{ useDateFormat(currentPost.date, "D.MM.YY").value }}<br/>
+                      {{ useDateFormat(currentPost.date, "HH:mm").value }}
+                  </time>
+              </header>
+              <div class="post-body">
+                  <p>{{ currentPost.body }}</p>
+              </div>
+              <div v-if="currentPost.imageURL !== null" class="post-image">
+                  <img alt="Post image" :src="`${currentPost.imageURL}`"/>
+              </div>
             </div>
+          </div>
         </div>
 
         <div id="comments">
@@ -326,6 +316,10 @@ a {
   background-color: $surfaceVariant;
   border-radius: 6px;
   margin-top: 10px;
+}
+
+.selected-post {
+  margin: 10px;
 }
 
 
