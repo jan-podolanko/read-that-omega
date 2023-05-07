@@ -43,6 +43,13 @@ const changeUser = reactive({
   password: "",
 });
 
+const changePassword = reactive({
+  newPassword0: "",
+  newPassword1: "",
+});
+
+
+
 function signOutHandler() {
     auth.signOut().then(() => {
     });
@@ -146,7 +153,24 @@ async function changeNickname() {
     router.go()
     return true;
   }
-    errorHandler("Wrong password!")
+    errorHandler("Error occured!")
+}
+
+async function changePass() {
+  if (changePassword.newPassword0.length == 0 || changePassword.newPassword1.length == 0) {
+    errorHandler("All forms must be filled in!")
+    return;
+  }
+  if (changePassword.newPassword0.length < 8) {
+    errorHandler("New password must be at least 8 characters long!")
+    return;
+  }
+  if (changePassword.newPassword0 != changePassword.newPassword1) {
+    errorHandler("Passwords do not match!")
+    return;
+  }
+  const isSuccess = await userStore.changePassword(changePassword.newPassword0, changePassword.oldPassword)
+  console.log('success')
 }
 
 
@@ -197,9 +221,32 @@ async function changeNickname() {
             <TextButton style="margin: 1rem;">Change nickname</TextButton>
           </form>
         </section>
+
         <section v-else class="profile-header">
           <span>Users logged in using Google or Github accounts cannot change their nickname and password</span>
         </section>
+
+        <section class="profile-header">
+          <h1>Change password:</h1>
+          <form action="#" @submit.prevent="changePass()">
+            <TextField class="changeUser"
+                    id="Subject"
+                    placeholder="New password"
+                    maxlength="20"
+                    type="password"
+                    v-model:value="changePassword.newPassword0"
+                />
+                <TextField class="changeUser"
+                    id="Subject"
+                    placeholder="Confirm new password"
+                    maxlength="20"
+                    type="password"
+                    v-model:value="changePassword.newPassword1"
+                />
+            <TextButton style="margin: 1rem;">Change password</TextButton>
+          </form>
+        </section>
+
 
         <section class="post" v-for="post in userPosts">
             <header class="post-header">
