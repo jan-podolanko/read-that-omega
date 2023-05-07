@@ -2,14 +2,16 @@
     import OutlinedTextButton from "../components/OutlinedTextButton.vue";
     import TextButton from "../components/TextButton.vue";
     import TextField from "../components/TextField.vue";
-    import { reactive, computed } from "vue";
+    import { reactive, computed, onBeforeMount } from "vue";
     import { usePostsStore } from "../../stores/posts";
     import { useRouter } from "vue-router";
     import { useToast } from "vue-toastification";
+    import { useUserStore } from "../../stores/user";
 
     const toast = useToast();
     const router = useRouter();
     const postStore = usePostsStore();
+    const userStore = useUserStore();
 
     const post: {
         subject: string;
@@ -23,6 +25,17 @@
         image: null,
         location: null,
         subject: ""
+    });
+
+    const state: { subjects: Array<any> | null } = reactive({
+    subjects: [],
+    });
+
+    onBeforeMount(() => {
+    userStore.getSubjects().then(subjects => {
+        console.log(subjects);
+        state.subjects = subjects;
+    });
     });
 
     const imgURL = computed(() => {
@@ -108,6 +121,9 @@
         <h1>Create a new post</h1>
 
         <form action="#" @submit.prevent="createPost()">
+            <select v-model="post.subject" id="subject-filter">
+                <option v-for="subject in state.subjects">{{ subject.subject }}</option>
+            </select>
             <TextField
                 type="text"
                 placeholder="Title"

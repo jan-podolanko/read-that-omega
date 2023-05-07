@@ -1,4 +1,5 @@
-import { NewPost, Post, Comment } from "../model/Post";
+import { NewPost, Post } from "../model/Post";
+import { Comment } from "../model/Comment";
 import {
     addDoc,
     arrayRemove,
@@ -204,7 +205,7 @@ export const usePostsStore = defineStore("firestore", () => {
                     } catch (e) {
                         console.log(e);
                     }
-
+                    console.log(user)
                     return {
                         id: postSnapshot.id,
                         author: user,

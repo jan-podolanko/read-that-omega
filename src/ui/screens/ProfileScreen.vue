@@ -104,7 +104,7 @@ async function deleteSubject(id: string) {
 
 const userPosts = computed(() => {
     return state.posts.filter(
-        post => post.author.displayName === user!!.displayName
+        post => post.author.uid === user!!.uid
     );
 });
 
