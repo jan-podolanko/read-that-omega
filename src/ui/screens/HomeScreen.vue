@@ -73,7 +73,7 @@ const filteredPosts = computed(() => {
                 <option value="">Select a subject</option>
                 <option v-for="subject in state.subjects">{{ subject.subject }}</option>
             </select>
-            <section class="post" v-for="post in state.posts">
+            <section class="post" v-for="post in filteredPosts">
                 <router-link :to="{ name: 'postid', params: { id: post.id } }">
                     <header class="post-header">
                         <div>
