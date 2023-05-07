@@ -2,7 +2,7 @@ import {Ref, ref} from "vue";
 import {User} from "../model/User";
 import {UserEntity} from "../firebase/entities";
 import {defineStore} from "pinia";
-import {addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc} from "firebase/firestore";
 import {useFirebaseStore} from "./firebase";
 import {
     createUserWithEmailAndPassword,
@@ -15,6 +15,7 @@ import {
 import firebase from "firebase/compat";
 import DocumentData = firebase.firestore.DocumentData;
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
+import { firebaseConfig } from "../firebase/config";
 
 export type AuthProvider = "google" | "github";
 
@@ -42,6 +43,19 @@ export const useUserStore = defineStore("user", () => {
             });
     }
 
+    async function getAllNicknames() {
+        return getDocs(collection(db, "users"))
+            .catch(e => {
+                console.log(e);
+                return null;
+            })
+            .then(snapshot => {
+                if (snapshot == null) return null;
+                console.log(snapshot.docs.map((doc) => ({...doc.data(), id:doc.id})))
+                return snapshot.docs.map((doc)=>({...doc.data(), id:doc.id}))
+            });
+    }
+
     async function getSubjects() {
         return getDocs(collection(db, "subjects"))
             .catch(e => {
@@ -54,6 +68,35 @@ export const useUserStore = defineStore("user", () => {
                 return snapshot.docs.map((doc)=>({...doc.data(), id:doc.id}))
             });
     }
+
+    async function changeNickname(userID: string, email: string, newNickname: string, password: string): Promise<boolean> {
+        try {
+          const user = await signInWithEmailAndPassword(auth, email, password);
+          await updateProfile(user.user, { displayName: newNickname });
+      
+          const userRef = doc(db, "users", userID);
+          await updateDoc(userRef, { displayName: newNickname });
+      
+          return true;
+        } catch (e) {
+          console.error(e);
+          return false;
+        }
+      }
+
+      async function changePassword(newPassword: string, password: string): Promise<boolean> {
+        try {
+          firebase.initializeApp(firebaseConfig);
+          var db = firebase.firestore();
+          const user = firebase.auth().currentUser;
+          await user.updatePassword(newPassword)
+      
+          return true;
+        } catch (e) {
+          console.error(e);
+          return false;
+        }
+      }
 
     async function addSubject(subject: string): Promise<boolean> {
         try {
@@ -173,5 +216,8 @@ export const useUserStore = defineStore("user", () => {
         addSubject,
         getSubjects,
         deleteSubject,
+        getAllNicknames,
+        changeNickname,
+        changePassword,
     };
 });
