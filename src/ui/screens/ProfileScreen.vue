@@ -19,14 +19,18 @@ onBeforeMount(() => {
         state.posts = posts;
     });
     userStore.getSubjects().then(subjects => {
-      state.subjects = subjects
+      state.subjects = subjects;
+    });
+    userStore.getAllNicknames().then(nicknames => {
+      state.nicknames = nicknames
     });
 });
 const postsStore = usePostsStore();
 
-const state: { posts: Post[], subjects: Array<any> | any} = reactive({
+const state: { posts: Post[], subjects: Array<any> | any, nicknames: Array<any> | any} = reactive({
     posts: [],
-    subjects: []
+    subjects: [],
+    nicknames: []
 });
 
 const auth = getAuth();
@@ -34,6 +38,10 @@ const user = auth.currentUser;
 const router = useRouter();
 
 const subjectAddition = reactive({subject: ""});
+const changeUser = reactive({
+  nickname: "",
+  password: "",
+});
 
 function signOutHandler() {
     auth.signOut().then(() => {
@@ -116,6 +124,32 @@ async function deletePostHandler(post: Post) {
         }
     }
 }
+
+async function changeNickname() {
+  if (changeUser.nickname.length == 0 || changeUser.password.length == 0) {
+    errorHandler("Nickname and password cannot be empty")
+    return;
+  }
+  if (changeUser.nickname.length < 3) {
+    errorHandler("Nickname must be at least 3 characters long")
+    return;
+  }
+  for (let i = 0; i < state.nicknames.length; i++) {
+      if (state.nicknames[i].displayName == changeUser.nickname) {
+        errorHandler("Nickname already in use")
+        return;
+      }
+    }
+  const isSuccess = await userStore.changeNickname(user?.uid, user?.email, changeUser.nickname, changeUser.password)
+  
+  if (isSuccess) {
+    router.go()
+    return true;
+  }
+    errorHandler("Wrong password!")
+}
+
+
 </script>
 
 <template>
@@ -143,6 +177,30 @@ async function deletePostHandler(post: Post) {
               </div>
             </div>
         </section>
+
+        <section class="profile-header" v-if="user?.providerData[0].providerId == 'password'">
+          <h1>Change nickname:</h1>
+          <form action="#" @submit.prevent="changeNickname()">
+            <TextField class="changeUser"
+                    id="Subject"
+                    placeholder="New nickname"
+                    maxlength="20"
+                    v-model:value="changeUser.nickname"
+                />
+                <TextField class="changeUser"
+                    id="Subject"
+                    placeholder="Password confirmation"
+                    maxlength="20"
+                    type="password"
+                    v-model:value="changeUser.password"
+                />
+            <TextButton style="margin: 1rem;">Change nickname</TextButton>
+          </form>
+        </section>
+        <section v-else class="profile-header">
+          <span>Users logged in using Google or Github accounts cannot change their nickname and password</span>
+        </section>
+
         <section class="post" v-for="post in userPosts">
             <header class="post-header">
                 <div>
@@ -266,6 +324,16 @@ a {
       align-content: center;
     }
   }
+
+  .changeUser {
+    border-radius: 8px;
+    box-shadow: 0 0 10px 5px rgba(black, 0.1);
+    background-color: $surfaceVariant;
+    padding: 0.5rem 0.7rem;
+    margin-top: 10px;
+    margin: 1rem;
+  }
+
   .subject-name {
     border-radius: 8px;
     box-shadow: 0 0 10px 5px rgba(black, 0.1);
