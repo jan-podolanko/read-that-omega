@@ -16,7 +16,7 @@ const state: { posts: Post[], subjects: Array<any> | null } = reactive({
 const filter = ref('');
 const search = ref(false);
 const searchTerm = ref('');
-
+let currentPost: Post = ref(null);
 onBeforeMount(() => {
     postsStore.getPosts().then(posts => {
         console.log(posts);
@@ -27,6 +27,7 @@ onBeforeMount(() => {
         state.subjects = subjects;
     });
 });
+
 
 const auth = getAuth();
 
@@ -57,6 +58,15 @@ const filteredPosts = computed(() => {
     return state.posts.filter((post)=> post.title.toLowerCase().includes(searchTerm.value))
   }
 })
+
+/* const currentPost2 = computed(()=> {
+  return currentPost
+} )*/
+
+
+function testfunc(){
+  console.log(currentPost)
+}
 </script>
 
 <template>
@@ -83,8 +93,7 @@ const filteredPosts = computed(() => {
                 <option v-for="subject in state.subjects">{{ subject.subject }}</option>
             </select>
             <section class="post" v-for="post in filteredPosts">
-                <router-link :to="{ name: 'postid', params: { id: post.id } }">
-                    <header class="post-header">
+                    <header class="post-header" @click="()=>currentPost = post">
                         <div>
                             <span>{{ post.title }}</span> <br/>
                             <div v-if="post.location !== null" class="location-header">
@@ -103,7 +112,6 @@ const filteredPosts = computed(() => {
                     <div v-if="post.imageURL !== null" class="post-image">
                         <img alt="Post image" :src="`${post.imageURL}`"/>
                     </div>
-                </router-link>
                 <div class="post-actions">
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     post.likeAmount
@@ -123,9 +131,34 @@ const filteredPosts = computed(() => {
                 </div>
             </section>
         </div>
-        <div id="post">
 
+        <div id="post">
+          <div v-if="!currentPost">Choose a post</div>
+          <div v-else>
+            <div class="post">
+              <header class="post-header">
+                  <div>
+                      <span>{{ currentPost.title }}</span> <br/>
+                      <div v-if="currentPost.location !== null" class="location-header">
+                          <span class="material-icons"> pin_drop </span>
+                          <span>{{ currentPost.location }}</span>
+                      </div>
+                  </div>
+                  <time :datetime="currentPost.date.toISOString()"
+                  >{{ useDateFormat(currentPost.date, "D.MM.YY").value }}<br/>
+                      {{ useDateFormat(currentPost.date, "HH:mm").value }}
+                  </time>
+              </header>
+              <div class="post-body">
+                  <p>{{ currentPost.body }}</p>
+              </div>
+              <div v-if="currentPost.imageURL !== null" class="post-image">
+                  <img alt="Post image" :src="`${currentPost.imageURL}`"/>
+              </div>
+            </div>
+          </div>
         </div>
+        
         <div id="comments">
         </div>
     </main>
@@ -235,6 +268,10 @@ a {
     opacity: 0.75;
     text-align: end;
     font-style: italic;
+  }
+
+  &:hover {
+    cursor: pointer;
   }
 }
 
