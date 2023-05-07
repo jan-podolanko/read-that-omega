@@ -59,21 +59,13 @@ const filteredPosts = computed(() => {
   }
 })
 
-/* const currentPost2 = computed(()=> {
-  return currentPost
-} )*/
-
-
-function testfunc(){
-  console.log(currentPost)
-}
 </script>
 
 <template>
     <main id="homescreen">
         <div id="posts">
             <header class="main-header">
-                <h2> ReadThat</h2>
+                <h2>ReadThat</h2>
                 <div id="icons">
                     <router-link to="settings">
                         <span class="material-icons">settings</span>
@@ -133,9 +125,9 @@ function testfunc(){
         </div>
 
         <div id="post">
-          <div v-if="!currentPost">Choose a post</div>
+          <h2 style="text-align: center; margin-top: 10px;" v-if="!currentPost">Choose a post</h2>
           <div v-else>
-            <div class="post">
+            <div class="post selected-post">
               <header class="post-header">
                   <div>
                       <span>{{ currentPost.title }}</span> <br/>
@@ -320,6 +312,10 @@ a {
   background-color: $surfaceVariant;
   border-radius: 6px;
   margin-top: 10px;
+}
+
+.selected-post {
+  margin: 10px;
 }
 
 
