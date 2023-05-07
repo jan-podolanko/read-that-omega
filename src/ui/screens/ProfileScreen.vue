@@ -170,7 +170,11 @@ async function changePass() {
     return;
   }
   const isSuccess = await userStore.changePassword(changePassword.newPassword0, changePassword.oldPassword)
-  console.log('success')
+  if (isSuccess) {
+    errorHandler("Password changed!")
+    return true;
+  }
+  errorHandler("Something wrong happend!")
 }
 
 
@@ -186,7 +190,7 @@ async function changePass() {
             ><br/>
             <button @click="signOutHandler">sign out</button>
             <form action="#" @submit.prevent="addSubject">
-                <TextField
+                <TextField class="changeUser"
                     id="Subject"
                     placeholder="Add subject.."
                     maxlength="20"
