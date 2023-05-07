@@ -5,6 +5,7 @@ import {Post} from "../../model/Post";
 import {useDateFormat} from "@vueuse/core";
 import {useUserStore} from "../../stores/user";
 import {getAuth} from "firebase/auth";
+import TextField from "../components/TextField.vue";
 
 const postsStore = usePostsStore();
 const userStore = useUserStore();
@@ -13,6 +14,9 @@ const state: { posts: Post[], subjects: Array<any> | null } = reactive({
     subjects: [],
 });
 const filter = ref('');
+const search = ref(false);
+const searchTerm = ref('');
+
 onBeforeMount(() => {
     postsStore.getPosts().then(posts => {
         console.log(posts);
@@ -48,9 +52,9 @@ async function likePost(post: Post) {
 
 const filteredPosts = computed(() => {
   if(filter.value != ""){
-    return state.posts?.filter((post: { subject: String; }) => post.subject == filter.value)
+    return state.posts?.filter((post: { subject: String; }) => post.subject == filter.value).filter((post)=> post.title.toLowerCase().includes(searchTerm.value))
   } else {
-    return state.posts
+    return state.posts.filter((post)=> post.title.toLowerCase().includes(searchTerm.value))
   }
 })
 </script>
@@ -58,21 +62,22 @@ const filteredPosts = computed(() => {
 <template>
     <main id="homescreen">
         <div id="posts">
-            <header class="mainHeader">
+            <header class="main-header">
                 <h2> ReadThat</h2>
                 <div id="icons">
                     <router-link to="settings">
                         <span class="material-icons">settings</span>
                     </router-link>
-                    <router-link to="search">
+                    <div id="search-button" @click="()=>search = !search">
                         <span class="material-icons">search</span>
-                    </router-link>
+                    </div>
                     <span class="material-icons" @click="signOutHandler">logout</span>
                     <router-link to="createpost">
                         <span class="material-icons">add_circle</span>
                     </router-link>
                 </div>
             </header>
+            <TextField v-if="search" v-model:value="searchTerm"></TextField>
             <select v-model="filter" id="subject-filter">
                 <option value="">All subjects</option>
                 <option v-for="subject in state.subjects">{{ subject.subject }}</option>
@@ -169,7 +174,7 @@ select{
     }
 }
 
-.mainHeader {
+.main-header {
   padding: 1rem 0.5rem 0;
   display: flex;
   flex-direction: row;
@@ -179,6 +184,10 @@ select{
 
   > div > span {
     overflow: auto;
+  }
+
+  #search-button:hover {
+    cursor: pointer;
   }
 }
 
@@ -275,4 +284,6 @@ a {
   border-radius: 6px;
   margin-top: 10px;
 }
+
+
 </style>
