@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { onBeforeMount, reactive } from "vue";
+    import { computed, onBeforeMount, reactive, ref } from "vue";
     import { usePostsStore } from "../../stores/posts";
     import { Post } from "../../model/Post";
     import { useDateFormat } from "@vueuse/core";
@@ -11,7 +11,7 @@
         posts: [],
         subjects: [],
     });
-    const filter = ""
+    const filter = ref('');
     onBeforeMount(() => {
         postsStore.getPosts().then(posts => {
             console.log(posts);
@@ -37,9 +37,9 @@
         }
     }
 
-    function filterBySubject(subject: String){
-        return state.subjects.filter((post: { subject: String; }) => post.subject == subject)
-    }
+    const filteredPosts = computed(() => {
+        return state.posts?.filter((post: { subject: String; }) => post.subject == filter.value)
+    })
 </script>
 
 <template>
@@ -47,8 +47,11 @@
         >Type what you are thinking about…
     </router-link>
     <main id="posts">
-        <select><option v-for="subject in state.subjects" style="color:black" :v-model="filter">{{ subject.subject }}</option></select><button @click="filterBySubject(filter)">filter by subject</button>
-        <section class="post" v-for="post in state.posts">
+        <select v-model="filter" id="subject-filter">
+            <option disabled value="">Select a subject</option>
+            <option v-for="subject in state.subjects">{{ subject.subject }}</option>
+        </select>
+        <section class="post" v-for="post in filteredPosts">
             <router-link :to="{ name: 'postid', params: { id: post.id } }">
             <header class="post-header">
                 <div>
@@ -184,5 +187,10 @@
             max-height: 24px;
             border-radius: 50%;
         }
+    }
+
+    #subject-filter {
+        background-color: $surfaceVariant;
+        border-radius: 6px;
     }
 </style>
