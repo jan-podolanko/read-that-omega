@@ -18,6 +18,11 @@ const router = createRouter({
             component: () => import("./ui/screens/HomeScreen.vue"),
         },
         {
+            path: "/settings",
+            name: "Settings",
+            component: () => import("./ui/screens/SettingsScreen.vue"),
+        },
+        {
             path: "/search",
             name: "Search",
             component: () => import("./ui/screens/SearchScreen.vue"),

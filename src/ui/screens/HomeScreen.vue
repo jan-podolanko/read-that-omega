@@ -1,27 +1,35 @@
 <script setup lang="ts">
-    import { computed, onBeforeMount, reactive, ref } from "vue";
-    import { usePostsStore } from "../../stores/posts";
-    import { Post } from "../../model/Post";
-    import { useDateFormat } from "@vueuse/core";
-    import { useUserStore } from "../../stores/user";
+import {computed, onBeforeMount, reactive, ref} from "vue";
+import {usePostsStore} from "../../stores/posts";
+import {Post} from "../../model/Post";
+import {useDateFormat} from "@vueuse/core";
+import {useUserStore} from "../../stores/user";
+import {getAuth} from "firebase/auth";
 
-    const postsStore = usePostsStore();
-    const userStore = useUserStore();
-    const state: { posts: Post[], subjects: Array<any> | null } = reactive({
-        posts: [],
-        subjects: [],
+const postsStore = usePostsStore();
+const userStore = useUserStore();
+const state: { posts: Post[], subjects: Array<any> | null } = reactive({
+    posts: [],
+    subjects: [],
+});
+const filter = ref('');
+onBeforeMount(() => {
+    postsStore.getPosts().then(posts => {
+        console.log(posts);
+        state.posts = posts;
     });
-    const filter = ref('');
-    onBeforeMount(() => {
-        postsStore.getPosts().then(posts => {
-            console.log(posts);
-            state.posts = posts;
-        });
-        userStore.getSubjects().then(subjects => {
-            console.log(subjects);
-            state.subjects = subjects;
-        });
+    userStore.getSubjects().then(subjects => {
+        console.log(subjects);
+        state.subjects = subjects;
     });
+});
+
+const auth = getAuth();
+
+function signOutHandler() {
+    auth.signOut().then(() => {
+    });
+}
 
 
 async function likePost(post: Post) {
@@ -38,43 +46,56 @@ async function likePost(post: Post) {
     }
 }
 
-    const filteredPosts = computed(() => {
-        return state.posts?.filter((post: { subject: String; }) => post.subject == filter.value)
-    })
+const filteredPosts = computed(() => {
+    return state.posts?.filter((post: { subject: String; }) => post.subject == filter.value)
+})
 </script>
 
 <template>
-    <router-link :to="{ name: 'CreatePost' }"
-        >Type what you are thinking about…
-    </router-link>
-    <main id="posts">
-        <select v-model="filter" id="subject-filter">
-            <option disabled value="">Select a subject</option>
-            <option v-for="subject in state.subjects">{{ subject.subject }}</option>
-        </select>
-        <section class="post" v-for="post in filteredPosts">
-            <router-link :to="{ name: 'postid', params: { id: post.id } }">
-            <header class="post-header">
-                <div>
-                    <span>{{ post.title }}</span> <br />
-                    <div v-if="post.location !== null" class="location-header">
-                        <span class="material-icons"> pin_drop </span>
-                        <span>{{ post.location }}</span>
-                    </div>
+    <main id="homescreen">
+        <div id="posts">
+            <header class="mainHeader">
+                <h2> ReadThat</h2>
+                <div id="icons">
+                    <router-link to="Settings">
+                        <span class="material-icons">settings</span>
+                    </router-link>
+                    <router-link to="Search">
+                        <span class="material-icons">search</span>
+                    </router-link>
+                    <span class="material-icons" @click="signOutHandler">logout</span>
+                    <router-link to="CreatePost">
+                        <span class="material-icons">add_circle</span>
+                    </router-link>
                 </div>
-                <time :datetime="post.date.toISOString()"
-                    >{{ useDateFormat(post.date, "D.MM.YY").value }}<br />@
-                    {{ useDateFormat(post.date, "HH:mm").value }}
-                </time>
             </header>
-            <div class="post-body">
-                <p>{{ post.body }}</p>
-            </div>
-            <div v-if="post.imageURL !== null" class="post-image">
-                <img :src="`${post.imageURL}`" />
-            </div>
-        </router-link>
-            <div class="post-actions">
+            <select v-model="filter" id="subject-filter">
+                <option value="">Select a subject</option>
+                <option v-for="subject in state.subjects">{{ subject.subject }}</option>
+            </select>
+            <section class="post" v-for="post in state.posts">
+                <router-link :to="{ name: 'postid', params: { id: post.id } }">
+                    <header class="post-header">
+                        <div>
+                            <span>{{ post.title }}</span> <br/>
+                            <div v-if="post.location !== null" class="location-header">
+                                <span class="material-icons"> pin_drop </span>
+                                <span>{{ post.location }}</span>
+                            </div>
+                        </div>
+                        <time :datetime="post.date.toISOString()"
+                        >{{ useDateFormat(post.date, "D.MM.YY").value }}<br/>
+                            {{ useDateFormat(post.date, "HH:mm").value }}
+                        </time>
+                    </header>
+                    <div class="post-body">
+                        <p>{{ post.body }}</p>
+                    </div>
+                    <div v-if="post.imageURL !== null" class="post-image">
+                        <img alt="Post image" :src="`${post.imageURL}`"/>
+                    </div>
+                </router-link>
+                <div class="post-actions">
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     post.likeAmount
                     }}</span>
@@ -92,6 +113,7 @@ async function likePost(post: Post) {
                     />
                 </div>
             </section>
+        </div>
         <div id="post">
 
         </div>
@@ -127,20 +149,37 @@ main {
 
     }
   }
+    #comments {
+        border-right: none;
+    }
 
   ::-webkit-scrollbar {
     display: none;
   }
 }
 
+select{
+    font-weight: bold;
+    >option {
+        font-weight: bold;
+    }
+}
+
+.mainHeader {
+  padding: 1rem 0.5rem 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: stretch;
+
+  > div > span {
+    overflow: auto;
+  }
+}
+
 a {
-  background-color: $surfaceVariant;
-  color: rgba($onSurfaceVariant, 0.7);
-  border: none;
-  border-radius: 24px;
-  padding: 1rem;
-  text-decoration: none;
-  font-size: 0.8rem;
+  padding: 0.5rem;
 
   &:hover {
     cursor: pointer;
@@ -218,18 +257,18 @@ a {
     letter-spacing: 1px;
   }
 
-        .post-author-photo {
-            min-width: 24px;
-            max-width: 24px;
-            min-height: 24px;
-            max-height: 24px;
-            border-radius: 50%;
-        }
-    }
+  .post-author-photo {
+    min-width: 24px;
+    max-width: 24px;
+    min-height: 24px;
+    max-height: 24px;
+    border-radius: 50%;
+  }
+}
 
-    #subject-filter {
-        background-color: $surfaceVariant;
-        border-radius: 6px;
-        margin-top: 10px;
-    }
+#subject-filter {
+  background-color: $surfaceVariant;
+  border-radius: 6px;
+  margin-top: 10px;
+}
 </style>
