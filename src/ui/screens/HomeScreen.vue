@@ -145,6 +145,23 @@ const filteredPosts = computed(() => {
               <div v-if="currentPost.imageURL !== null" class="post-image">
                   <img alt="Post image" :src="`${currentPost.imageURL}`"/>
               </div>
+              <div class="post-actions">
+                <span style="margin-bottom: 2px; margin-right: 3px">{{
+                    currentPost.likeAmount
+                    }}</span>
+                    <span id="like-button" class="material-icons" @click="likePost(currentPost)">{{
+                        currentPost.didUserLike ? "favorite" : "favorite_outlined"
+                        }}</span>
+                    <div style="flex-grow: 1"></div>
+                    <span class="post-author-username">{{
+                        currentPost.author.displayName
+                        }}</span>
+                    <img
+                            class="post-author-photo"
+                            :src="currentPost.author.photoURL"
+                            alt=""
+                    />
+                </div>
             </div>
           </div>
         </div>
@@ -296,6 +313,10 @@ a {
 
   .material-icons {
     font-size: 20px;
+  }
+  
+  #like-button:hover {
+    cursor: pointer
   }
 
   .post-author-username {
