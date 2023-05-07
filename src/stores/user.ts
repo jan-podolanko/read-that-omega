@@ -15,6 +15,7 @@ import {
 import firebase from "firebase/compat";
 import DocumentData = firebase.firestore.DocumentData;
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
+import { firebaseConfig } from "../firebase/config";
 
 export type AuthProvider = "google" | "github";
 
@@ -75,6 +76,20 @@ export const useUserStore = defineStore("user", () => {
       
           const userRef = doc(db, "users", userID);
           await updateDoc(userRef, { displayName: newNickname });
+      
+          return true;
+        } catch (e) {
+          console.error(e);
+          return false;
+        }
+      }
+
+      async function changePassword(newPassword: string, password: string): Promise<boolean> {
+        try {
+          firebase.initializeApp(firebaseConfig);
+          var db = firebase.firestore();
+          const user = firebase.auth().currentUser;
+          await user.updatePassword(newPassword)
       
           return true;
         } catch (e) {
@@ -203,5 +218,6 @@ export const useUserStore = defineStore("user", () => {
         deleteSubject,
         getAllNicknames,
         changeNickname,
+        changePassword,
     };
 });
