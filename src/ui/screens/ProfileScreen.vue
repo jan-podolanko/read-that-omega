@@ -8,8 +8,10 @@ import {useDateFormat} from "@vueuse/core";
 import {useUserStore} from "../../stores/user";
 import TextButton from "../components/TextButton.vue";
 import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
 
 const userStore = useUserStore();
+const toast = useToast();
 
 onBeforeMount(() => {
     postsStore.getUserPosts(userStore.userProfile!!.uid).then(posts => {
@@ -63,7 +65,23 @@ async function getSubjects() {
     }
 }
 
+function errorHandler(message: String, duration: number = 200) {
+        toast.error(message);
+        navigator.vibrate(duration);
+    }
+
 async function addSubject() {
+    if (subjectAddition.subject.length == 0) {
+            errorHandler("Subject cannot be empty");
+            return;
+        }
+    for (let i = 0; i < state.subjects.length; i++) {
+      if (state.subjects[i].subject == subjectAddition.subject) {
+        errorHandler("Subject already added");
+        console.log(i)
+        return;
+      }
+    }
     try {
         userStore.addSubject(subjectAddition.subject).then(()=>router.go(0));
         return true;
@@ -90,6 +108,15 @@ const userPosts = computed(() => {
         post => post.author.displayName === user!!.displayName
     );
 });
+
+async function deletePostHandler(post: Post) {
+    const confirmDelete = confirm("Are you sure you want to delete this post?");
+    if (confirmDelete) {
+        if (await postsStore.deletePost(post.id)) {
+            state.posts = state.posts.filter(p => p.id !== post.id);
+        }
+    }
+}
 </script>
 
 <template>
@@ -102,10 +129,9 @@ const userPosts = computed(() => {
             ><br/>
             <button @click="signOutHandler">sign out</button>
             <form action="#" @submit.prevent="addSubject">
-                <label for="Subject">Subject</label>
                 <TextField
                     id="Subject"
-                    placeholder="Subject"
+                    placeholder="Add subject.."
                     maxlength="20"
                     v-model:value="subjectAddition.subject"
                 />
@@ -127,12 +153,12 @@ const userPosts = computed(() => {
                         <span>{{ post.location }}</span>
                     </div>
                     <div class="subject-header">
-                        <span>{{ post.subject }}</span>
                     </div>
                 </div>
                 <time :datetime="post.date.toISOString()"
                 >{{ useDateFormat(post.date, "D.MM.YY").value }}<br/>@
                     {{ useDateFormat(post.date, "HH:mm").value }}
+                    <p>Subject: {{ post.subject ? post.subject : "not defined" }}</p>
                 </time>
             </header>
             <div class="post-body">
@@ -142,7 +168,10 @@ const userPosts = computed(() => {
                 <img :src="`${post.imageURL}`"/>
             </div>
             <div class="post-actions">
-                <span style="margin-bottom: 2px; margin-right: 3px">{{
+                <button class="delete-post-button" @click="deletePostHandler(post)">
+                <span class="material-icons">delete</span>
+                </button>
+                <span style="margin-bottom: 2px; margin-right: 3px" >{{
                     post.likeAmount
                     }}</span>
                 <span class="material-icons" @click="likePost(post)">{{
@@ -272,6 +301,7 @@ a {
     display: flex;
     align-items: center;
     gap: 0.3rem;
+    justify-content: center;
 
     .material-icons {
       font-size: 20px;
@@ -318,4 +348,27 @@ a {
     }
   }
 }
+
+.delete-post-button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            min-width: 32px;
+            max-width: 32px;
+            min-height: 32px;
+            max-height: 32px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+    .delete-post-button:hover {
+    background-color: darkred;
+    }
+
+    form {
+      padding-top: 1rem;
+      border: 1px black;
+    }
+
 </style>
