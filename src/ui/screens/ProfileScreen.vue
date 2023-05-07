@@ -226,7 +226,7 @@ async function changePass() {
           <span>Users logged in using Google or Github accounts cannot change their nickname and password</span>
         </section>
 
-        <section class="profile-header">
+        <section class="profile-header" v-if="user?.providerData[0].providerId == 'password'">
           <h1>Change password:</h1>
           <form action="#" @submit.prevent="changePass()">
             <TextField class="changeUser"
@@ -246,7 +246,6 @@ async function changePass() {
             <TextButton style="margin: 1rem;">Change password</TextButton>
           </form>
         </section>
-
 
         <section class="post" v-for="post in userPosts">
             <header class="post-header">
