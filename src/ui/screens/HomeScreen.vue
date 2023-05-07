@@ -92,7 +92,6 @@ async function likePost(post: Post) {
                     />
                 </div>
             </section>
-        </div>
         <div id="post">
 
         </div>
@@ -231,5 +230,6 @@ a {
     #subject-filter {
         background-color: $surfaceVariant;
         border-radius: 6px;
+        margin-top: 10px;
     }
 </style>
