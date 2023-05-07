@@ -47,7 +47,11 @@ async function likePost(post: Post) {
 }
 
 const filteredPosts = computed(() => {
+  if(filter.value != ""){
     return state.posts?.filter((post: { subject: String; }) => post.subject == filter.value)
+  } else {
+    return state.posts
+  }
 })
 </script>
 
@@ -70,7 +74,7 @@ const filteredPosts = computed(() => {
                 </div>
             </header>
             <select v-model="filter" id="subject-filter">
-                <option value="">Select a subject</option>
+                <option value="">All subjects</option>
                 <option v-for="subject in state.subjects">{{ subject.subject }}</option>
             </select>
             <section class="post" v-for="post in filteredPosts">
