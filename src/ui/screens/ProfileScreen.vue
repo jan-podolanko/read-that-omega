@@ -78,7 +78,6 @@ async function addSubject() {
     for (let i = 0; i < state.subjects.length; i++) {
       if (state.subjects[i].subject == subjectAddition.subject) {
         errorHandler("Subject already added");
-        console.log(i)
         return;
       }
     }
