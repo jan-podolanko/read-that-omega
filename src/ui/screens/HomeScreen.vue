@@ -6,17 +6,21 @@ import {useDateFormat} from "@vueuse/core";
 import {useUserStore} from "../../stores/user";
 import {getAuth} from "firebase/auth";
 import TextField from "../components/TextField.vue";
+import { Comment } from "../../model/Comment";
 
 const postsStore = usePostsStore();
 const userStore = useUserStore();
-const state: { posts: Post[], subjects: Array<any> | null } = reactive({
+const state: { posts: Post[], subjects: Array<any> | null, comments: Comment[] } = reactive({
     posts: [],
     subjects: [],
+    comments: [],
 });
 const filter = ref('');
 const search = ref(false);
 const searchTerm = ref('');
 let currentPost: Post = ref(null);
+
+
 onBeforeMount(() => {
     postsStore.getPosts().then(posts => {
         console.log(posts);
@@ -49,7 +53,21 @@ async function likePost(post: Post) {
             post.didUserLike = true;
         }
     }
-}
+};
+
+async function likeComment(comment: Comment) {
+        if (comment.didUserLike) {
+            if (await postsStore.dislikeComment(comment.id)) {
+                comment.likeAmount--;
+                comment.didUserLike = false;
+            }
+        } else {
+            if (await postsStore.likeComment(comment.id)) {
+                comment.likeAmount++;
+                comment.didUserLike = true;
+            }
+        }
+    };
 
 const filteredPosts = computed(() => {
   if(filter.value != ""){
@@ -57,7 +75,15 @@ const filteredPosts = computed(() => {
   } else {
     return state.posts.filter((post)=> post.title.toLowerCase().includes(searchTerm.value))
   }
-})
+});
+
+function getComments(post: Post){
+  currentPost = post;
+  console.log(post.id);
+  postsStore.getPostComments(post.id).then((comments) => {
+    state.comments = comments;
+  })
+};
 
 </script>
 
@@ -83,7 +109,7 @@ const filteredPosts = computed(() => {
                 <option v-for="subject in state.subjects">{{ subject.subject }}</option>
             </select>
             <section class="post" v-for="post in filteredPosts">
-                <header class="post-header" @click="()=>currentPost = post">
+                <header class="post-header" @click="getComments(post)">
                     <div>
                         <span>{{ post.title }}</span> <br/>
                         <div v-if="post.location !== null" class="location-header">
@@ -106,7 +132,7 @@ const filteredPosts = computed(() => {
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     post.likeAmount
                     }}</span>
-                    <span class="material-icons" @click="likePost(post)">{{
+                    <span class="material-icons like-button" @click="likePost(post)">{{
                         post.didUserLike ? "favorite" : "favorite_outlined"
                         }}</span>
                     <div style="flex-grow: 1"></div>
@@ -149,7 +175,7 @@ const filteredPosts = computed(() => {
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     currentPost.likeAmount
                     }}</span>
-                    <span id="like-button" class="material-icons" @click="likePost(currentPost)">{{
+                    <span class="material-icons like-button" @click="likePost(currentPost)">{{
                         currentPost.didUserLike ? "favorite" : "favorite_outlined"
                         }}</span>
                     <div style="flex-grow: 1"></div>
@@ -167,6 +193,35 @@ const filteredPosts = computed(() => {
         </div>
 
         <div id="comments">
+          <section class="post" v-for="comment in state.comments" :key="comment.id">
+            <time :datetime="comment.date.toISOString()"
+                    >{{ useDateFormat(comment.date, "D.MM.YY").value }}<br />@
+                    {{ useDateFormat(comment.date, "HH:mm").value }}
+                </time>
+
+                <div class="post-body">
+                <p>{{ comment.body }}</p>
+            </div>
+
+
+            <div class="post-actions">
+                <span style="margin-bottom: 2px; margin-right: 3px">{{
+                    comment.likeAmount
+                }}</span>
+                <span class="material-icons like-button" @click="likeComment(comment)">{{
+                    comment.didUserLike ? "favorite" : "favorite_outlined"
+                }}</span>
+                <div style="flex-grow: 1"></div>
+                <span class="post-author-username">{{
+                    comment.author.displayName
+                }}</span>
+                <img
+                    class="post-author-photo"
+                    :src="comment.author.photoURL"
+                    alt=""
+                />
+                </div>
+        </section>
         </div>
     </main>
 </template>
@@ -315,7 +370,7 @@ a {
     font-size: 20px;
   }
   
-  #like-button:hover {
+  .like-button:hover {
     cursor: pointer
   }
 
@@ -343,5 +398,7 @@ a {
   margin: 10px;
 }
 
-
+#comments > section {
+  margin: 10px;
+}
 </style>
