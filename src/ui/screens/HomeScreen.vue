@@ -139,6 +139,7 @@ function errorHandler(message: String, duration: number = 200) {
 <template>
     <main id="homescreen">
         <div id="posts">
+          <div>
             <header class="main-header">
                 <h2>ReadThat</h2>
                 <div id="icons">
@@ -152,12 +153,13 @@ function errorHandler(message: String, duration: number = 200) {
                     </router-link>
                     <span class="material-icons header-icons" style="flex: 3" @click="signOutHandler">logout</span>
                 </div>
-            </header>
-            <TextField v-if="search" v-model:value="searchTerm"></TextField>
-            <select v-model="filter" id="subject-filter">
-                <option value="">All subjects</option>
-                <option v-for="subject in state.subjects">{{ subject.subject }}</option>
-            </select>
+              </header>
+              <TextField v-if="search" v-model:value="searchTerm"></TextField>
+              <select v-model="filter" id="subject-filter">
+                  <option value="">All subjects</option>
+                  <option v-for="subject in state.subjects">{{ subject.subject }}</option>
+              </select>
+            </div>
             <section class="post" v-for="post in filteredPosts">
                 <PostSingular :post="post" @onPostClick="getComments(post)"/>
             </section>
@@ -340,6 +342,7 @@ a {
   background-color: $surfaceVariant;
   border-radius: 6px;
   margin-top: 10px;
+  width: 100%;
 }
 
 #comments > section {
