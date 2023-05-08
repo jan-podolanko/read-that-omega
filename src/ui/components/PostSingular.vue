@@ -187,6 +187,7 @@ a {
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  padding-top: 0.5rem;
 
 }
 
