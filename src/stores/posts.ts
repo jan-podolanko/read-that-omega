@@ -96,8 +96,7 @@ export const usePostsStore = defineStore("firestore", () => {
         const postsQuery = query(
             postsCollection,
             where("uid", "==", uid),
-            orderBy("timestamp", "desc"),
-            limit(10)
+            orderBy("timestamp", "desc")
         );
         const postsQuerySnapshot = await getDocs(postsQuery);
 
@@ -141,8 +140,7 @@ export const usePostsStore = defineStore("firestore", () => {
         const CommentsQuery = query(
             commentsCollection,
             where("postid", "==", postid),
-            orderBy("timestamp", "desc"),
-            limit(10)
+            orderBy("timestamp", "desc")
         );
         const CommentsQuerySnapshot = await getDocs(CommentsQuery);
 
@@ -177,13 +175,11 @@ export const usePostsStore = defineStore("firestore", () => {
                 postsCollection,
                 where("title", ">=", searchText),
                 orderBy("title", "desc"),
-                orderBy("timestamp", "asc"),
-                limit(10)
+                orderBy("timestamp", "asc")
             );
         } else {
             postsQuery = query(
                 postsCollection,
-                limit(10),
                 orderBy("timestamp", "desc")
             );
         }
@@ -203,9 +199,8 @@ export const usePostsStore = defineStore("firestore", () => {
                         const imageRef = ref(storage, imageStorageURL);
                         imageURL = await getDownloadURL(imageRef);
                     } catch (e) {
-                        console.log(e);
+                        //console.log(e);
                     }
-                    console.log(user)
                     return {
                         id: postSnapshot.id,
                         author: user,
