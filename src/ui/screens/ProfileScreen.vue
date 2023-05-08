@@ -134,7 +134,7 @@ async function deletePostHandler(post: Post) {
     const confirmDelete = confirm("Are you sure you want to delete this post?");
     if (confirmDelete) {
         if (await postsStore.deletePost(post.id)) {
-            state.posts = state.posts.filter(p => p.id !== post.id);
+            router.go(0)
         }
     }
 }
@@ -281,25 +281,25 @@ async function changePass() {
                 <img :src="`${post.imageURL}`"/>
             </div>
             <div class="post-actions">
-                <button class="delete-post-button" @click="deletePostHandler(post)">
-                <span class="material-icons">delete</span>
-                </button>
-                <span style="margin-bottom: 2px; margin-right: 3px" >{{
+          <span class="material-icons delete-post-button" @click="deletePostHandler(post)">
+            delete
+          </span>
+                <span style="margin-bottom: 2px; margin-right: 3px">{{
                     post.likeAmount
                     }}</span>
-                <span class="material-icons" @click="likePost(post)">{{
-                    post.didUserLike ? "favorite" : "favorite_outlined"
-                    }}</span>
-                <div style="flex-grow: 1"></div>
-                <span class="post-author-username">{{
-                    post.author.displayName
-                    }}</span>
-                <img
-                        class="post-author-photo"
-                        :src="post.author.photoURL"
-                        :alt="post.author.displayName"
-                />
-            </div>
+            <span class="material-icons like-button" @click="likePost(post)">{{
+                            post.didUserLike ? "favorite" : "favorite_outlined"
+                            }}</span>
+            <div style="flex-grow: 1"></div>
+            <span class="post-author-username">{{
+                            post.author.displayName
+                            }}</span>
+            <img
+                    class="post-author-photo"
+                    :src="post.author.photoURL"
+                    alt=""
+            />
+        </div>
         </section>
     </main>
 </template>
@@ -477,17 +477,21 @@ a {
             color: white;
             border: none;
             border-radius: 50%;
-            min-width: 32px;
-            max-width: 32px;
-            min-height: 32px;
-            max-height: 32px;
-            font-size: 10px;
+            padding: 2px;
             cursor: pointer;
+
+          &:hover {
+            background-color: darkred;
+          }
         }
 
-    .delete-post-button:hover {
-    background-color: darkred;
-    }
+  .like-button:hover {
+    cursor: pointer;
+  }
+    
+  button.delete-post-button {
+    align-items: center;
+  }
 
     form {
       padding-top: 1rem;

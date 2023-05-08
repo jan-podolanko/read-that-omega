@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import {getAuth} from "firebase/auth";
 import { Post } from "../../model/Post";
 import {useDateFormat} from "@vueuse/core";
 import {usePostsStore} from "../../stores/posts";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const postsStore = usePostsStore();
+const auth = getAuth();
+const user = auth.currentUser;
+
 async function likePost(post: Post) {
     if (post.didUserLike) {
         if (await postsStore.dislikePost(post.id)) {
@@ -17,6 +23,16 @@ async function likePost(post: Post) {
         }
     }
 };
+
+async function deletePostHandler(post: Post) {
+    const confirmDelete = confirm("Are you sure you want to delete this post?");
+    if (confirmDelete) {
+        if (await postsStore.deletePost(post.id)) {
+            router.go(0)
+        }
+    }
+}
+
 
 defineProps(["post"])
 
@@ -46,6 +62,9 @@ defineEmits(["onPostClick"])
             <img alt="Post image" :src="`${post.imageURL}`"/>
         </div>
         <div class="post-actions">
+          <span v-if="post.author.displayName == user?.displayName" class="material-icons delete-post-button" @click="deletePostHandler(post)">
+            delete 
+          </span>
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     post.likeAmount
                     }}</span>
@@ -193,4 +212,23 @@ form > section > button {
   margin: 10px;
   display: flex;
 }
+
+.delete-post-button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 2px;
+            cursor: pointer;
+
+          &:hover {
+            background-color: darkred;
+          }
+        }
+    
+  button.delete-post-button {
+    align-items: center;
+  }
+
+
 </style>
