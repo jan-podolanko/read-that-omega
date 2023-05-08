@@ -6,8 +6,8 @@ import {useDateFormat} from "@vueuse/core";
 import {useUserStore} from "../../stores/user";
 import {getAuth} from "firebase/auth";
 import TextField from "../components/TextField.vue";
-import { Comment } from "../../model/Comment";
-import { useToast } from "vue-toastification";
+import {Comment} from "../../model/Comment";
+import {useToast} from "vue-toastification";
 import TextButton from "../components/TextButton.vue";
 
 const postsStore = usePostsStore();
@@ -25,12 +25,12 @@ const searchTerm = ref('');
 let currentPost: Post = ref(null);
 
 const comment: {
-        body: string;
-        id: string;
-    } = reactive({
-        body: "",
-        id: ""
-    });
+    body: string;
+    id: string;
+} = reactive({
+    body: "",
+    id: ""
+});
 
 onBeforeMount(() => {
     postsStore.getPosts().then(posts => {
@@ -67,57 +67,59 @@ async function likePost(post: Post) {
 };
 
 async function likeComment(comment: Comment) {
-        if (comment.didUserLike) {
-            if (await postsStore.dislikeComment(comment.id)) {
-                comment.likeAmount--;
-                comment.didUserLike = false;
-            }
-        } else {
-            if (await postsStore.likeComment(comment.id)) {
-                comment.likeAmount++;
-                comment.didUserLike = true;
-            }
+    if (comment.didUserLike) {
+        if (await postsStore.dislikeComment(comment.id)) {
+            comment.likeAmount--;
+            comment.didUserLike = false;
         }
-    };
+    } else {
+        if (await postsStore.likeComment(comment.id)) {
+            comment.likeAmount++;
+            comment.didUserLike = true;
+        }
+    }
+};
 
 const filteredPosts = computed(() => {
-  if(filter.value != ""){
-    return state.posts?.filter((post: { subject: String; }) => post.subject == filter.value).filter((post)=> post.title.toLowerCase().includes(searchTerm.value))
-  } else {
-    return state.posts.filter((post)=> post.title.toLowerCase().includes(searchTerm.value))
-  }
+    if (filter.value != "") {
+        return state.posts?.filter((post: {
+            subject: String;
+        }) => post.subject == filter.value).filter((post) => post.title.toLowerCase().includes(searchTerm.value))
+    } else {
+        return state.posts.filter((post) => post.title.toLowerCase().includes(searchTerm.value))
+    }
 });
 
-function getComments(post: Post){
-  currentPost = post;
-  console.log(post.id);
-  postsStore.getPostComments(post.id).then((comments) => {
-    state.comments = comments;
-  })
+function getComments(post: Post) {
+    currentPost = post;
+    console.log(post.id);
+    postsStore.getPostComments(post.id).then((comments) => {
+        state.comments = comments;
+    })
 };
 
 async function createComment(post: Post) {
-        const body = comment.body.trim();
-        const postid = post.id
-        if (body.length == 0) {
-            errorHandler("Comment cannot be empty");
-            return;
-        }
-        const isSuccess = await postsStore.createComment({
-            postid,
-            body,
-        });
-
-        /* if (isSuccess) {
-            router.go(0);
-        } */
-
+    const body = comment.body.trim();
+    const postid = post.id
+    if (body.length == 0) {
+        errorHandler("Comment cannot be empty");
+        return;
     }
+    const isSuccess = await postsStore.createComment({
+        postid,
+        body,
+    });
 
-  function errorHandler(message: String, duration: number = 200) {
-      toast.error(message);
-      navigator.vibrate(duration);
-  }
+    /* if (isSuccess) {
+        router.go(0);
+    } */
+
+}
+
+function errorHandler(message: String, duration: number = 200) {
+    toast.error(message);
+    navigator.vibrate(duration);
+}
 
 </script>
 
@@ -127,7 +129,8 @@ async function createComment(post: Post) {
             <header class="main-header">
                 <h2>ReadThat</h2>
                 <div id="icons">
-                    <span class="material-icons header-icons" id="search-button" style="flex: 2" @click="()=>search = !search">search</span>
+                    <span class="material-icons header-icons" id="search-button" style="flex: 2"
+                          @click="()=>search = !search">search</span>
                     <router-link to="createpost" style="flex: 4">
                         <span class="material-icons header-icons">add_circle</span>
                     </router-link>
@@ -156,7 +159,8 @@ async function createComment(post: Post) {
                         {{ useDateFormat(post.date, "HH:mm").value }}
                     </time>
                 </header>
-                <div class="post-body" style="display: -webkit-box; overflow: hidden; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">
+                <div class="post-body"
+                     style="display: -webkit-box; overflow: hidden; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">
                     <p>{{ post.body }}</p>
                 </div>
                 <div v-if="post.imageURL !== null" class="post-image">
@@ -183,91 +187,91 @@ async function createComment(post: Post) {
         </div>
 
         <div id="post">
-          <h2 style="text-align: center; margin-top: 10px;" v-if="!currentPost">Choose a post</h2>
-          <div v-else>
-            <div class="post selected-post">
-              <header class="post-header">
-                  <div>
-                      <span>{{ currentPost.title }}</span> <br/>
-                      <div v-if="currentPost.location !== null" class="location-header">
-                          <span class="material-icons"> pin_drop </span>
-                          <span>{{ currentPost.location }}</span>
-                      </div>
-                  </div>
-                  <time :datetime="currentPost.date.toISOString()"
-                  >{{ useDateFormat(currentPost.date, "D.MM.YY").value }}<br/>
-                      {{ useDateFormat(currentPost.date, "HH:mm").value }}
-                  </time>
-              </header>
-              <div class="post-body">
-                  <p>{{ currentPost.body }}</p>
-              </div>
-              <div v-if="currentPost.imageURL !== null" class="post-image">
-                  <img alt="Post image" :src="`${currentPost.imageURL}`"/>
-              </div>
-              <div class="post-actions">
+            <h2 style="text-align: center; margin-top: 10px;" v-if="!currentPost">Choose a post</h2>
+            <div v-else>
+                <div class="post selected-post">
+                    <header class="post-header">
+                        <div>
+                            <span>{{ currentPost.title }}</span> <br/>
+                            <div v-if="currentPost.location !== null" class="location-header">
+                                <span class="material-icons"> pin_drop </span>
+                                <span>{{ currentPost.location }}</span>
+                            </div>
+                        </div>
+                        <time :datetime="currentPost.date.toISOString()"
+                        >{{ useDateFormat(currentPost.date, "D.MM.YY").value }}<br/>
+                            {{ useDateFormat(currentPost.date, "HH:mm").value }}
+                        </time>
+                    </header>
+                    <div class="post-body">
+                        <p>{{ currentPost.body }}</p>
+                    </div>
+                    <div v-if="currentPost.imageURL !== null" class="post-image">
+                        <img alt="Post image" :src="`${currentPost.imageURL}`"/>
+                    </div>
+                    <div class="post-actions">
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     currentPost.likeAmount
                     }}</span>
-                    <span class="material-icons like-button" @click="likePost(currentPost)">{{
-                        currentPost.didUserLike ? "favorite" : "favorite_outlined"
-                        }}</span>
-                    <div style="flex-grow: 1"></div>
-                    <span class="post-author-username">{{
-                        currentPost.author.displayName
-                        }}</span>
-                    <img
-                            class="post-author-photo"
-                            :src="currentPost.author.photoURL"
-                            alt=""
-                    />
+                        <span class="material-icons like-button" @click="likePost(currentPost)">{{
+                            currentPost.didUserLike ? "favorite" : "favorite_outlined"
+                            }}</span>
+                        <div style="flex-grow: 1"></div>
+                        <span class="post-author-username">{{
+                            currentPost.author.displayName
+                            }}</span>
+                        <img
+                                class="post-author-photo"
+                                :src="currentPost.author.photoURL"
+                                alt=""
+                        />
+                    </div>
                 </div>
             </div>
-          </div>
         </div>
 
         <div id="comments">
-          <section class="post" v-for="comment in state.comments" :key="comment.id">
-            <time :datetime="comment.date.toISOString()"
-                    >{{ useDateFormat(comment.date, "D.MM.YY").value }}<br />@
+            <section class="post" v-for="comment in state.comments" :key="comment.id">
+                <time :datetime="comment.date.toISOString()"
+                >{{ useDateFormat(comment.date, "D.MM.YY").value }}<br/>@
                     {{ useDateFormat(comment.date, "HH:mm").value }}
                 </time>
 
                 <div class="post-body">
-                <p>{{ comment.body }}</p>
-            </div>
+                    <p>{{ comment.body }}</p>
+                </div>
 
 
-            <div class="post-actions">
+                <div class="post-actions">
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     comment.likeAmount
-                }}</span>
-                <span class="material-icons like-button" @click="likeComment(comment)">{{
-                    comment.didUserLike ? "favorite" : "favorite_outlined"
-                }}</span>
-                <div style="flex-grow: 1"></div>
-                <span class="post-author-username">{{
-                    comment.author.displayName
-                }}</span>
-                <img
-                    class="post-author-photo"
-                    :src="comment.author.photoURL"
-                    alt=""
-                />
+                    }}</span>
+                    <span class="material-icons like-button" @click="likeComment(comment)">{{
+                        comment.didUserLike ? "favorite" : "favorite_outlined"
+                        }}</span>
+                    <div style="flex-grow: 1"></div>
+                    <span class="post-author-username">{{
+                        comment.author.displayName
+                        }}</span>
+                    <img
+                            class="post-author-photo"
+                            :src="comment.author.photoURL"
+                            alt=""
+                    />
                 </div>
-        </section>
+            </section>
 
-        <form v-if="currentPost" action="#" @submit.prevent="createComment(currentPost)">
-          <input
-              placeholder="Add comment..."
-              maxlength="400"
-              v-model.trim="comment.body"
-          >
-          <section class="button-row">
-              <TextButton>Post</TextButton>
-          </section>
-        </form>
-      </div>
+            <form v-if="currentPost" action="#" @submit.prevent="createComment(currentPost)">
+                <input
+                        placeholder="Add comment..."
+                        maxlength="400"
+                        v-model.trim="comment.body"
+                >
+                <section class="button-row">
+                    <TextButton>Post</TextButton>
+                </section>
+            </form>
+        </div>
     </main>
 </template>
 
@@ -275,11 +279,13 @@ async function createComment(post: Post) {
 main {
   display: flex;
   flex-direction: row;
+  overflow: hidden;
+  height: 100vh;
 
   > div {
     flex: 1 1 30%;
-    height: 100vh;
-    overflow-y: hidden;
+    height: 100%;
+    overflow-y: scroll;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
     border-right: white solid;
@@ -301,15 +307,16 @@ main {
   }
 }
 
-.header-icons{
-    flex-direction: row;
-    font-size: 2rem;
-    letter-spacing: 2px;
-    font-weight: 500;
-    color: #aaaaaa;
-    &:hover{
-        cursor: pointer
-    }
+.header-icons {
+  flex-direction: row;
+  font-size: 2rem;
+  letter-spacing: 2px;
+  font-weight: 500;
+  color: #aaaaaa;
+
+  &:hover {
+    cursor: pointer
+  }
 }
 
 select {
@@ -414,7 +421,7 @@ a {
   .material-icons {
     font-size: 20px;
   }
-  
+
   .like-button:hover {
     cursor: pointer
   }
@@ -446,6 +453,7 @@ a {
 #comments > section {
   margin: 10px;
 }
+
 form > input {
   margin: 10px;
   border-radius: 12px;
@@ -454,10 +462,12 @@ form > input {
   background-color: $surfaceVariant;
   pointer-events: all;
   display: flex;
+
   &:focus {
-      outline: $primary 1px solid;
+    outline: $primary 1px solid;
   }
 }
+
 form > section > button {
   margin: 10px;
   display: flex;

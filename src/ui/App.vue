@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import BottomNavigation from "./components/BottomNavigation.vue";
 import {useRouter} from "vue-router";
 import {useUserStore} from "../stores/user";
 import {watch} from "vue";
@@ -36,7 +35,7 @@ a {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
   Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
   "Segoe UI Symbol";
-  height: 100%;
+  height: 100vh;
   background: linear-gradient(to right, $surface, $gradientRight);
 }
 
@@ -45,8 +44,6 @@ a {
 }
 
 #app-container {
-  min-height: 100vh;
-  height: 100%;
   display: flex;
   flex-direction: column;
 }
