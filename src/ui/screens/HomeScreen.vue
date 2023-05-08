@@ -9,6 +9,8 @@ import TextField from "../components/TextField.vue";
 import {Comment} from "../../model/Comment";
 import {useToast} from "vue-toastification";
 import TextButton from "../components/TextButton.vue";
+import PostSingular from "./PostSingular.vue";
+import PostMiddleScreen from "./PostMiddleScreen.vue";
 
 const postsStore = usePostsStore();
 const userStore = useUserStore();
@@ -146,87 +148,14 @@ function errorHandler(message: String, duration: number = 200) {
                 <option v-for="subject in state.subjects">{{ subject.subject }}</option>
             </select>
             <section class="post" v-for="post in filteredPosts">
-                <header class="post-header" @click="getComments(post)">
-                    <div>
-                        <span>{{ post.title }}</span> <br/>
-                        <div v-if="post.location !== null" class="location-header">
-                            <span class="material-icons"> pin_drop </span>
-                            <span>{{ post.location }}</span>
-                        </div>
-                    </div>
-                    <time :datetime="post.date.toISOString()"
-                    >{{ useDateFormat(post.date, "D.MM.YY").value }}<br/>
-                        {{ useDateFormat(post.date, "HH:mm").value }}
-                    </time>
-                </header>
-                <div class="post-body"
-                     style="display: -webkit-box; overflow: hidden; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">
-                    <p>{{ post.body }}</p>
-                </div>
-                <div v-if="post.imageURL !== null" class="post-image">
-                    <img alt="Post image" :src="`${post.imageURL}`"/>
-                </div>
-                <div class="post-actions">
-                <span style="margin-bottom: 2px; margin-right: 3px">{{
-                    post.likeAmount
-                    }}</span>
-                    <span class="material-icons like-button" @click="likePost(post)">{{
-                        post.didUserLike ? "favorite" : "favorite_outlined"
-                        }}</span>
-                    <div style="flex-grow: 1"></div>
-                    <span class="post-author-username">{{
-                        post.author.displayName
-                        }}</span>
-                    <img
-                            class="post-author-photo"
-                            :src="post.author.photoURL"
-                            alt=""
-                    />
-                </div>
+                <PostSingular :post="post" @onPostClick="getComments(post)"/>
             </section>
         </div>
 
         <div id="post">
             <h2 style="text-align: center; margin-top: 10px;" v-if="!currentPost">Choose a post</h2>
             <div v-else>
-                <div class="post selected-post">
-                    <header class="post-header">
-                        <div>
-                            <span>{{ currentPost.title }}</span> <br/>
-                            <div v-if="currentPost.location !== null" class="location-header">
-                                <span class="material-icons"> pin_drop </span>
-                                <span>{{ currentPost.location }}</span>
-                            </div>
-                        </div>
-                        <time :datetime="currentPost.date.toISOString()"
-                        >{{ useDateFormat(currentPost.date, "D.MM.YY").value }}<br/>
-                            {{ useDateFormat(currentPost.date, "HH:mm").value }}
-                        </time>
-                    </header>
-                    <div class="post-body">
-                        <p>{{ currentPost.body }}</p>
-                    </div>
-                    <div v-if="currentPost.imageURL !== null" class="post-image">
-                        <img alt="Post image" :src="`${currentPost.imageURL}`"/>
-                    </div>
-                    <div class="post-actions">
-                <span style="margin-bottom: 2px; margin-right: 3px">{{
-                    currentPost.likeAmount
-                    }}</span>
-                        <span class="material-icons like-button" @click="likePost(currentPost)">{{
-                            currentPost.didUserLike ? "favorite" : "favorite_outlined"
-                            }}</span>
-                        <div style="flex-grow: 1"></div>
-                        <span class="post-author-username">{{
-                            currentPost.author.displayName
-                            }}</span>
-                        <img
-                                class="post-author-photo"
-                                :src="currentPost.author.photoURL"
-                                alt=""
-                        />
-                    </div>
-                </div>
+                <PostMiddleScreen :post="currentPost" @onPostClick="getComments(currentPost)"/>
             </div>
         </div>
 
@@ -240,8 +169,6 @@ function errorHandler(message: String, duration: number = 200) {
                 <div class="post-body">
                     <p>{{ comment.body }}</p>
                 </div>
-
-
                 <div class="post-actions">
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     comment.likeAmount
@@ -371,48 +298,6 @@ a {
   overflow-wrap: break-word;
 }
 
-.post-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  > div {
-    font-size: 1.1rem;
-    font-weight: 500;
-    line-height: 1.4;
-  }
-
-  > time {
-    font-size: 0.7rem;
-    line-height: 1.2;
-    opacity: 0.75;
-    text-align: end;
-    font-style: italic;
-  }
-
-  &:hover {
-    cursor: pointer;
-  }
-}
-
-.location-header {
-  display: flex;
-  align-items: center;
-  gap: 0.1rem;
-
-  > span {
-    font-size: 0.6rem;
-    font-weight: 500;
-    align-content: center;
-  }
-}
-
-.post-image {
-  display: flex;
-  width: fit-content;
-  object-fit: cover;
-}
-
 .post-actions {
   display: flex;
   align-items: center;
@@ -444,10 +329,6 @@ a {
   background-color: $surfaceVariant;
   border-radius: 6px;
   margin-top: 10px;
-}
-
-.selected-post {
-  margin: 10px;
 }
 
 #comments > section {
