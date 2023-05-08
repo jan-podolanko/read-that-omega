@@ -134,7 +134,7 @@
                 <textarea
                     placeholder="Type what you are thinking about…"
                     v-model.trim="post.body"
-                    maxlength="400"
+                    maxlength="1200"
                 ></textarea>
                 <div id="post-image-location-bar">
                     <section v-if="imgURL !== null">
