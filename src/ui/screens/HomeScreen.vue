@@ -7,9 +7,13 @@ import {useUserStore} from "../../stores/user";
 import {getAuth} from "firebase/auth";
 import TextField from "../components/TextField.vue";
 import { Comment } from "../../model/Comment";
+import { useToast } from "vue-toastification";
+import TextButton from "../components/TextButton.vue";
 
 const postsStore = usePostsStore();
 const userStore = useUserStore();
+const toast = useToast();
+
 const state: { posts: Post[], subjects: Array<any> | null, comments: Comment[] } = reactive({
     posts: [],
     subjects: [],
@@ -20,6 +24,13 @@ const search = ref(false);
 const searchTerm = ref('');
 let currentPost: Post = ref(null);
 
+const comment: {
+        body: string;
+        id: string;
+    } = reactive({
+        body: "",
+        id: ""
+    });
 
 onBeforeMount(() => {
     postsStore.getPosts().then(posts => {
@@ -84,6 +95,29 @@ function getComments(post: Post){
     state.comments = comments;
   })
 };
+
+async function createComment(post: Post) {
+        const body = comment.body.trim();
+        const postid = post.id
+        if (body.length == 0) {
+            errorHandler("Comment cannot be empty");
+            return;
+        }
+        const isSuccess = await postsStore.createComment({
+            postid,
+            body,
+        });
+
+        /* if (isSuccess) {
+            router.go(0);
+        } */
+
+    }
+
+  function errorHandler(message: String, duration: number = 200) {
+      toast.error(message);
+      navigator.vibrate(duration);
+  }
 
 </script>
 
@@ -222,7 +256,18 @@ function getComments(post: Post){
                 />
                 </div>
         </section>
-        </div>
+
+        <form v-if="currentPost" action="#" @submit.prevent="createComment(currentPost)">
+          <input
+              placeholder="Add comment..."
+              maxlength="400"
+              v-model.trim="comment.body"
+          >
+          <section class="button-row">
+              <TextButton>Post</TextButton>
+          </section>
+        </form>
+      </div>
     </main>
 </template>
 
@@ -400,5 +445,21 @@ a {
 
 #comments > section {
   margin: 10px;
+}
+form > input {
+  margin: 10px;
+  border-radius: 12px;
+  border: none;
+  padding: 0.8rem 1rem;
+  background-color: $surfaceVariant;
+  pointer-events: all;
+  display: flex;
+  &:focus {
+      outline: $primary 1px solid;
+  }
+}
+form > section > button {
+  margin: 10px;
+  display: flex;
 }
 </style>
