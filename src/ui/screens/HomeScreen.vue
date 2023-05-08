@@ -156,7 +156,7 @@ async function createComment(post: Post) {
                         {{ useDateFormat(post.date, "HH:mm").value }}
                     </time>
                 </header>
-                <div class="post-body">
+                <div class="post-body" style="display: -webkit-box; overflow: hidden; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">
                     <p>{{ post.body }}</p>
                 </div>
                 <div v-if="post.imageURL !== null" class="post-image">
