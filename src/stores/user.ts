@@ -64,7 +64,7 @@ export const useUserStore = defineStore("user", () => {
             })
             .then(snapshot => {
                 if (snapshot == null) return null;
-                console.log(snapshot.docs.map((doc) => ({...doc.data(), id:doc.id})))
+                //console.log(snapshot.docs.map((doc) => ({...doc.data(), id:doc.id})))
                 return snapshot.docs.map((doc)=>({...doc.data(), id:doc.id}))
             });
     }
