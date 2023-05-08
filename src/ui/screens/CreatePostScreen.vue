@@ -256,4 +256,8 @@
         border-radius: 6px;
         margin-top: 10px;
     }
+
+    span:hover {
+        cursor: pointer;
+    }
 </style>

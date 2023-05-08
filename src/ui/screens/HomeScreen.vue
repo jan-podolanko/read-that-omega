@@ -103,7 +103,6 @@ const filteredPosts = computed(() => {
 
 function getComments(post: Post) {
     currentPost = post;
-    router.replace("/post/" + post.id);
     router.replace(post.id);
     console.log(post.id);
     postsStore.getPostComments(post.id).then((comments) => {
