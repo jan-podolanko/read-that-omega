@@ -11,10 +11,12 @@ import {useToast} from "vue-toastification";
 import TextButton from "../components/TextButton.vue";
 import PostSingular from "../components/PostSingular.vue";
 import PostMiddleScreen from "../components/PostMiddleScreen.vue";
+import { useRouter } from "vue-router";
 
 const postsStore = usePostsStore();
 const userStore = useUserStore();
 const toast = useToast();
+const router = useRouter();
 
 const state: { posts: Post[], subjects: Array<any> | null, comments: Comment[] } = reactive({
     posts: [],
@@ -101,6 +103,7 @@ const filteredPosts = computed(() => {
 
 function getComments(post: Post) {
     currentPost = post;
+    router.replace("/post/" + post.id);
     console.log(post.id);
     postsStore.getPostComments(post.id).then((comments) => {
         state.comments = comments;
