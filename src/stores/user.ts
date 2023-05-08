@@ -162,12 +162,11 @@ export const useUserStore = defineStore("user", () => {
                 email,
                 password
             ).then(cred => cred.user);
-            await setDoc(doc(db, "users", user.uid), {
+            await updateDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
                 displayName: user.displayName,
                 photoURL: user.photoURL,
-                admin: false
-            } as UserEntity);
+            });
 
             return true;
         } catch (e) {
@@ -196,7 +195,8 @@ export const useUserStore = defineStore("user", () => {
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
                 displayName: user.displayName,
-                photoURL: user.photoURL
+                photoURL: user.photoURL,
+                admin: false
             } as UserEntity);
 
             return true;
