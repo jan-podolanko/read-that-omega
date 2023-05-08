@@ -18,6 +18,12 @@ const router = createRouter({
             component: () => import("./ui/screens/HomeScreen.vue"),
         },
         {
+            path: "/post/:id",
+            name: "Post",
+            component: () => import("./ui/screens/HomeScreen.vue"),
+            props: true,
+        },
+        {
             path: "/settings",
             name: "Settings",
             component: () => import("./ui/screens/SettingsScreen.vue"),
