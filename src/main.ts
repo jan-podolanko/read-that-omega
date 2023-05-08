@@ -24,11 +24,6 @@ const router = createRouter({
             props: true,
         },
         {
-            path: "/settings",
-            name: "Settings",
-            component: () => import("./ui/screens/SettingsScreen.vue"),
-        },
-        {
             path: "/search",
             name: "Search",
             component: () => import("./ui/screens/SearchScreen.vue"),

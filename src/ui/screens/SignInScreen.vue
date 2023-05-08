@@ -39,9 +39,9 @@
 </script>
 
 <template>
-    <h1>Enter your credentials to sign in</h1>
 
     <section id="signin-form">
+        <h1>Enter your credentials to sign in</h1>
         <div>
             <form action="#" @submit.prevent="onSignIn">
                 <label for="email">Email</label>
