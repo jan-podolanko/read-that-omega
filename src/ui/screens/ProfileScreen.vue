@@ -235,7 +235,7 @@ async function changePass() {
         </section>
 
         <section v-else class="profile-header">
-          <span>Users logged in using Google or Github accounts cannot change their nickname and password</span>
+          <span>Users logged in using Google account cannot change their nickname and password</span>
         </section>
 
         <section class="profile-header" v-if="user?.providerData[0].providerId == 'password'">
