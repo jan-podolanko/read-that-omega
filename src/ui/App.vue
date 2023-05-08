@@ -35,7 +35,7 @@ a {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
   Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
   "Segoe UI Symbol";
-  height: 100vh;
+  height: 100%;
   background: linear-gradient(to right, $surface, $gradientRight);
 }
 
@@ -44,6 +44,7 @@ a {
 }
 
 #app-container {
+    min-height: 100vh;
   display: flex;
   flex-direction: column;
 }

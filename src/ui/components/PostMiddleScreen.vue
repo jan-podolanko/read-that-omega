@@ -3,7 +3,8 @@
 import {usePostsStore} from "../../stores/posts";
 import {Post} from "../../model/Post";
 import {useDateFormat} from "@vueuse/core";
-
+import {useRouter} from "vue-router";
+import {getAuth} from "firebase/auth";
 
 async function likePost(post: Post) {
     if (post.didUserLike) {
@@ -19,6 +20,20 @@ async function likePost(post: Post) {
     }
 }
 
+const auth = getAuth();
+const user = auth.currentUser;
+
+const router = useRouter();
+
+async function deletePostHandler(post: Post) {
+    const confirmDelete = confirm("Are you sure you want to delete this post?");
+    if (confirmDelete) {
+        if (await postsStore.deletePost(post.id)) {
+            router.go(0)
+        }
+    }
+}
+
 defineProps(["post"])
 
 defineEmits(["onPostClick"])
@@ -27,63 +42,65 @@ const postsStore = usePostsStore();
 </script>
 
 <template>
-    <div class="post selected-post">
+    <div class="post-middle-screen">
+        <h2 class="post-title">{{ post.title }}</h2>
         <header class="post-header">
-            <div>
-                <span>{{ post.title }}</span> <br/>
+            <img
+                    class="post-author-photo"
+                    :src="post.author.photoURL"
+                    alt=""
+            />
+            <div class="post-name-time">
+                <span class="post-author-username">{{ post.author.displayName }}</span><br/>
                 <div v-if="post.location !== null" class="location-header">
                     <span class="material-icons"> pin_drop </span>
                     <span>{{ post.location }}</span>
                 </div>
+                <time :datetime="post.date.toISOString()"
+                >{{ useDateFormat(post.date, "D.MM.YY").value }}<br/>
+                    {{ useDateFormat(post.date, "HH:mm").value }}
+                </time>
             </div>
-            <time :datetime="post.date.toISOString()"
-            >{{ useDateFormat(post.date, "D.MM.YY").value }}<br/>
-                {{ useDateFormat(post.date, "HH:mm").value }}
-            </time>
+            <div class="post-actions">
+                <span
+                        v-if="post.author.displayName == user?.displayName"
+                        class="material-icons delete-post-button"
+                        @click="deletePostHandler(post)">delete
+          </span>
+                <div class="post-like">
+                <span style="margin-bottom: 2px; margin-right: 3px">{{
+                    post.likeAmount
+                    }}</span>
+                    <span class="material-icons like-button" @click="likePost(post)">{{
+                        post.didUserLike ? "favorite" : "favorite_outlined"
+                        }}</span>
+                </div>
+            </div>
         </header>
-        <div class="post-body">
-            <p>{{ post.body }}</p>
-        </div>
         <div v-if="post.imageURL !== null" class="post-image">
             <img alt="Post image" :src="`${post.imageURL}`"/>
         </div>
-        <div class="post-actions">
-                <span style="margin-bottom: 2px; margin-right: 3px">{{
-                        post.likeAmount
-                    }}</span>
-            <span class="material-icons like-button" @click="likePost(post)">{{
-                    post.didUserLike ? "favorite" : "favorite_outlined"
-                }}</span>
-            <div style="flex-grow: 1"></div>
-            <span class="post-author-username">{{
-                    post.author.displayName
-                }}</span>
-            <img
-                class="post-author-photo"
-                :src="post.author.photoURL"
-                alt=""
-            />
+        <div class="post-body">
+            <p>{{ post.body }}</p>
         </div>
     </div>
 </template>
 <style scoped lang="scss">
-select {
-  font-weight: bold;
 
-  > option {
-    font-weight: bold;
-  }
+.post-middle-screen {
+  padding: 0 1rem 1rem 1rem;
 }
 
-a {
-  padding: 0;
-
-  &:hover {
-    cursor: pointer;
-  }
+.post-title {
+  padding: 1rem 0.5rem 0;
+  overflow-wrap: break-word;
 }
 
-.post {
+.post-author-photo {
+  border-radius: 20%;
+}
+
+.post-body {
   border-radius: 8px;
   box-shadow: 0 0 10px 5px rgba(black, 0.1);
   background-color: $surfaceVariant;
@@ -91,12 +108,10 @@ a {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  overflow-wrap: break-word;
 }
 
 .post-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 
   > div {
@@ -113,9 +128,31 @@ a {
     font-style: italic;
   }
 
-  &:hover {
-    cursor: pointer;
+  > .post-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-end;
+    align-content: flex-end;
+
+    > .post-like {
+      display: flex;
+    }
   }
+}
+
+.material-icons:hover {
+  cursor: pointer;
+}
+
+
+.post-author-photo {
+  margin: 0 0.5rem 1rem 0;
+}
+
+.post-name-time {
+  align-self: self-start;
+  flex: 1;
 }
 
 .location-header {
@@ -136,37 +173,21 @@ a {
   object-fit: cover;
 }
 
-.post-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-
-}
-
-.selected-post {
-  margin: 10px;
-}
-
-#comments > section {
-  margin: 10px;
-}
-
-form > input {
-  margin: 10px;
-  border-radius: 12px;
+.delete-post-button {
+  background-color: transparent;
+  color: white;
   border: none;
-  padding: 0.8rem 1rem;
-  background-color: $surfaceVariant;
-  pointer-events: all;
-  display: flex;
+  padding: 2px;
+  border-radius: 50%;
+  cursor: pointer;
 
-  &:focus {
-    outline: $primary 1px solid;
+  &:hover {
+    background-color: darkred;
   }
 }
 
-form > section > button {
-  margin: 10px;
-  display: flex;
+.post-body {
+  background-color: $surfaceVariant
 }
+
 </style>

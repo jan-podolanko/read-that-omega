@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {getAuth} from "firebase/auth";
-import { Post } from "../../model/Post";
+import {Post} from "../../model/Post";
 import {useDateFormat} from "@vueuse/core";
 import {usePostsStore} from "../../stores/posts";
-import { useRouter } from "vue-router";
+import {useRouter} from "vue-router";
 
 const router = useRouter();
 const postsStore = usePostsStore();
@@ -22,7 +22,7 @@ async function likePost(post: Post) {
             post.didUserLike = true;
         }
     }
-};
+}
 
 async function deletePostHandler(post: Post) {
     const confirmDelete = confirm("Are you sure you want to delete this post?");
@@ -43,7 +43,7 @@ defineEmits(["onPostClick"])
     <div class="jan">
         <header class="post-header" @click="$emit('onPostClick')">
             <div>
-                <span>{{ post.title }}</span> <br/>
+                <span class="post-title">{{ post.title }}</span> <br/>
                 <div v-if="post.location !== null" class="location-header">
                     <span class="material-icons"> pin_drop </span>
                     <span>{{ post.location }}</span>
@@ -54,6 +54,7 @@ defineEmits(["onPostClick"])
                 {{ useDateFormat(post.date, "HH:mm").value }}
             </time>
         </header>
+        <hr>
         <div class="post-body"
              style="display: -webkit-box; overflow: hidden; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">
             <p>{{ post.body }}</p>
@@ -62,19 +63,20 @@ defineEmits(["onPostClick"])
             <img alt="Post image" :src="`${post.imageURL}`"/>
         </div>
         <div class="post-actions">
-          <span v-if="post.author.displayName == user?.displayName" class="material-icons delete-post-button" @click="deletePostHandler(post)">
+          <span v-if="post.author.displayName == user?.displayName" class="material-icons delete-post-button"
+                @click="deletePostHandler(post)">
             delete 
           </span>
-                <span style="margin-bottom: 2px; margin-right: 3px">{{
-                    post.likeAmount
-                    }}</span>
+            <span style="margin-bottom: 2px; margin-right: 3px">{{
+                post.likeAmount
+                }}</span>
             <span class="material-icons like-button" @click="likePost(post)">{{
-                            post.didUserLike ? "favorite" : "favorite_outlined"
-                            }}</span>
+                post.didUserLike ? "favorite" : "favorite_outlined"
+                }}</span>
             <div style="flex-grow: 1"></div>
             <span class="post-author-username">{{
-                            post.author.displayName
-                            }}</span>
+                post.author.displayName
+                }}</span>
             <img
                     class="post-author-photo"
                     :src="post.author.photoURL"
@@ -85,32 +87,6 @@ defineEmits(["onPostClick"])
 </template>
 
 <style scoped lang="scss">
-main {
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
-  height: 100vh;
-
-  > div {
-    flex: 1 1 30%;
-    height: 100%;
-    overflow-y: scroll;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-    border-right: white solid;
-
-    > header {
-      display: flex;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      flex-direction: row;
-    }
-  }
-
-  ::-webkit-scrollbar {
-    display: none;
-  }
-}
 
 select {
   font-weight: bold;
@@ -137,7 +113,7 @@ a {
     font-size: 1.1rem;
     font-weight: 500;
     line-height: 1.4;
-  }
+    }
 
   > time {
     font-size: 0.7rem;
@@ -153,16 +129,16 @@ a {
 }
 
 .post-author-username {
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
 }
 
 .post-author-photo {
-    min-width: 24px;
-    max-width: 24px;
-    min-height: 24px;
-    max-height: 24px;
-    border-radius: 50%;
+  min-width: 24px;
+  max-width: 24px;
+  min-height: 24px;
+  max-height: 24px;
+  border-radius: 50%;
 }
 
 .location-header {
@@ -177,6 +153,10 @@ a {
   }
 }
 
+.post-title {
+  overflow-wrap: break-word;
+}
+
 .post-image {
   display: flex;
   width: fit-content;
@@ -187,6 +167,7 @@ a {
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  padding-top: 0.5rem;
 
 }
 
@@ -214,21 +195,25 @@ form > section > button {
 }
 
 .delete-post-button {
-            background-color: transparent;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            padding: 2px;
-            cursor: pointer;
+  background-color: transparent;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 2px;
+  cursor: pointer;
 
-          &:hover {
-            background-color: darkred;
-          }
-        }
-    
-  button.delete-post-button {
-    align-items: center;
+  &:hover {
+    background-color: darkred;
   }
+}
+
+button.delete-post-button {
+  align-items: center;
+}
+
+img {
+  max-width: 50%;
+}
 
 
 </style>
