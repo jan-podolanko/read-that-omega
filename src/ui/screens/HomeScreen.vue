@@ -104,7 +104,6 @@ const filteredPosts = computed(() => {
 function getComments(post: Post) {
     currentPost = post;
     router.replace("/post/" + post.id);
-    console.log(post.id);
     postsStore.getPostComments(post.id).then((comments) => {
         state.comments = comments;
     })
@@ -121,9 +120,12 @@ async function createComment(post: Post) {
         postid,
         body,
     });
-    /* if (isSuccess) {
-        router.go(0);
-    } */
+
+    if (isSuccess) {
+      postsStore.getPostComments(post.id).then((comments) => {
+        state.comments = comments;
+    })
+    } 
 }
 
 function errorHandler(message: String, duration: number = 200) {
