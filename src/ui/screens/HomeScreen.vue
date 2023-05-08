@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onBeforeMount, reactive, ref} from "vue";
+import {computed, onBeforeMount, onMounted, reactive, ref} from "vue";
 import {usePostsStore} from "../../stores/posts";
 import {Post} from "../../model/Post";
 import {useDateFormat} from "@vueuse/core";
@@ -11,10 +11,12 @@ import {useToast} from "vue-toastification";
 import TextButton from "../components/TextButton.vue";
 import PostSingular from "../components/PostSingular.vue";
 import PostMiddleScreen from "../components/PostMiddleScreen.vue";
+import { useRouter } from "vue-router";
 
 const postsStore = usePostsStore();
 const userStore = useUserStore();
 const toast = useToast();
+const router = useRouter();
 
 const state: { posts: Post[], subjects: Array<any> | null, comments: Comment[] } = reactive({
     posts: [],
@@ -24,7 +26,7 @@ const state: { posts: Post[], subjects: Array<any> | null, comments: Comment[] }
 const filter = ref('');
 const search = ref(false);
 const searchTerm = ref('');
-let currentPost: Post = ref(null);
+let currentPost: Post | any = ref(null);
 
 const comment: {
     body: string;
@@ -35,16 +37,23 @@ const comment: {
 });
 
 onBeforeMount(() => {
+    
     postsStore.getPosts().then(posts => {
-        console.log(posts);
         state.posts = posts;
+        if(props.id){
+          currentPost = state.posts.find(post => post.id == props.id);
+        } else {
+          currentPost = state.posts[0];
+        }
     });
     userStore.getSubjects().then(subjects => {
-        console.log(subjects);
         state.subjects = subjects;
     });
 });
 
+const props = defineProps({
+  id: String,
+})
 
 const auth = getAuth();
 
@@ -94,6 +103,7 @@ const filteredPosts = computed(() => {
 
 function getComments(post: Post) {
     currentPost = post;
+    router.replace("/post/" + post.id);
     console.log(post.id);
     postsStore.getPostComments(post.id).then((comments) => {
         state.comments = comments;
