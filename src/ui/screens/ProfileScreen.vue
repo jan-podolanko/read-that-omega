@@ -22,15 +22,22 @@ onBeforeMount(() => {
       state.subjects = subjects;
     });
     userStore.getAllNicknames().then(nicknames => {
-      state.nicknames = nicknames
+      state.nicknames = nicknames;
+    });
+    userStore.getUser(userStore.userProfile!!.uid).then(admin => {
+      state.admin = admin;
     });
 });
 const postsStore = usePostsStore();
 
-const state: { posts: Post[], subjects: Array<any> | any, nicknames: Array<any> | any} = reactive({
+
+let isAdmin = false;
+
+const state: { posts: Post[], subjects: Array<any> | any, nicknames: Array<any> | any, admin: Array<any> | any} = reactive({
     posts: [],
     subjects: [],
-    nicknames: []
+    nicknames: [],
+    admin: []
 });
 
 const auth = getAuth();
@@ -189,6 +196,9 @@ async function changePass() {
             <span>{{ user?.email }}</span
             ><br/>
             <button @click="signOutHandler">sign out</button>
+          </section>
+            <section class="profile-header" v-if="state.admin.admin == true">
+              <h1>Admin settings:</h1>
             <form action="#" @submit.prevent="addSubject">
                 <TextField class="changeUser"
                     id="Subject"
@@ -204,7 +214,7 @@ async function changePass() {
                 <span class="material-icons" @click="deleteSubject(subject.id)">delete</span>
               </div>
             </div>
-        </section>
+          </section>
 
         <section class="profile-header" v-if="user?.providerData[0].providerId == 'password'">
           <h1>Change nickname:</h1>
@@ -212,13 +222,11 @@ async function changePass() {
             <TextField class="changeUser"
                     id="Subject"
                     placeholder="New nickname"
-                    maxlength="20"
                     v-model:value="changeUser.nickname"
                 />
                 <TextField class="changeUser"
                     id="Subject"
                     placeholder="Password confirmation"
-                    maxlength="20"
                     type="password"
                     v-model:value="changeUser.password"
                 />
@@ -236,14 +244,12 @@ async function changePass() {
             <TextField class="changeUser"
                     id="Subject"
                     placeholder="New password"
-                    maxlength="20"
                     type="password"
                     v-model:value="changePassword.newPassword0"
                 />
                 <TextField class="changeUser"
                     id="Subject"
                     placeholder="Confirm new password"
-                    maxlength="20"
                     type="password"
                     v-model:value="changePassword.newPassword1"
                 />
