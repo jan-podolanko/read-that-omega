@@ -211,5 +211,9 @@ button.delete-post-button {
   align-items: center;
 }
 
+img {
+  max-width: 50%;
+}
+
 
 </style>
