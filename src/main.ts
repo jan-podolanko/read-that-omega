@@ -18,7 +18,7 @@ const router = createRouter({
             component: () => import("./ui/screens/HomeScreen.vue"),
         },
         {
-            path: "/post/:id",
+            path: "/:id",
             name: "Post",
             component: () => import("./ui/screens/HomeScreen.vue"),
             props: true,
