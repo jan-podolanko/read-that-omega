@@ -24,11 +24,6 @@ const router = createRouter({
             props: true,
         },
         {
-            path: "/search",
-            name: "Search",
-            component: () => import("./ui/screens/SearchScreen.vue"),
-        },
-        {
             path: "/profile",
             name: "Profile",
             component: () => import("./ui/screens/ProfileScreen.vue"),
@@ -47,12 +42,6 @@ const router = createRouter({
             path: "/createpost",
             name: "CreatePost",
             component: () => import("./ui/screens/CreatePostScreen.vue"),
-        },
-        {
-            path: "/post/:id",
-            name: "postid",
-            component: () => import("./ui/screens/PostScreen.vue"),
-            props: true,
         },
     ],
 });

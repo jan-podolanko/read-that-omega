@@ -121,11 +121,9 @@ async function createComment(post: Post) {
         postid,
         body,
     });
-
     /* if (isSuccess) {
         router.go(0);
     } */
-
 }
 
 function errorHandler(message: String, duration: number = 200) {
