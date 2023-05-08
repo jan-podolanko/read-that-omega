@@ -171,6 +171,18 @@ function errorHandler(message: String, duration: number = 200) {
         </div>
 
         <div id="comments">
+            <h1 style="padding: 1rem;">Comments:</h1>
+            <form v-if="currentPost" action="#" @submit.prevent="createComment(currentPost)">
+                <input
+                        placeholder="Add comment..."
+                        maxlength="400"
+                        v-model.trim="comment.body"
+                >
+                <section class="button-row">
+                    <TextButton>Post</TextButton>
+                </section>
+            </form>
+
             <section class="post" v-for="comment in state.comments" :key="comment.id">
                 <time :datetime="comment.date.toISOString()"
                 >{{ useDateFormat(comment.date, "D.MM.YY").value }}<br/>@
@@ -198,22 +210,34 @@ function errorHandler(message: String, duration: number = 200) {
                     />
                 </div>
             </section>
-
-            <form v-if="currentPost" action="#" @submit.prevent="createComment(currentPost)">
-                <input
-                        placeholder="Add comment..."
-                        maxlength="400"
-                        v-model.trim="comment.body"
-                >
-                <section class="button-row">
-                    <TextButton>Post</TextButton>
-                </section>
-            </form>
         </div>
     </main>
 </template>
 
 <style scoped lang="scss">
+
+form {
+  border-radius: 8px;
+  box-shadow: 0 0 10px 5px rgba(black, 0.1);
+  background-color: $surfaceVariant;
+  padding: 0.5rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-wrap: break-word;
+  margin: 10px;
+  display: flex;
+}
+
+input {
+  background-color: $onSurfaceVariant;
+  box-shadow: 0 0 10px 5px rgba(black, 0.1);
+}
+
+.button-row {
+  text-align: right;
+}
+
 main {
   display: flex;
   flex-direction: row;
@@ -362,6 +386,5 @@ form > input {
 
 form > section > button {
   margin: 10px;
-  display: flex;
 }
 </style>
