@@ -9,8 +9,8 @@ import TextField from "../components/TextField.vue";
 import {Comment} from "../../model/Comment";
 import {useToast} from "vue-toastification";
 import TextButton from "../components/TextButton.vue";
-import PostSingular from "./PostSingular.vue";
-import PostMiddleScreen from "./PostMiddleScreen.vue";
+import PostSingular from "../components/PostSingular.vue";
+import PostMiddleScreen from "../components/PostMiddleScreen.vue";
 
 const postsStore = usePostsStore();
 const userStore = useUserStore();
