@@ -39,45 +39,53 @@
 </script>
 
 <template>
+    <main>
+    <div id="sign-in-third">
+        <section id="signin-form">
+            <h1>Enter your credentials to sign in</h1>
+            <div>
+                <form action="#" @submit.prevent="onSignIn">
+                    <label for="email">Email</label>
+                    <TextField
+                        id="email"
+                        type="email"
+                        v-model:value="credentials.email"
+                    />
 
-    <section id="signin-form">
-        <h1>Enter your credentials to sign in</h1>
-        <div>
-            <form action="#" @submit.prevent="onSignIn">
-                <label for="email">Email</label>
-                <TextField
-                    id="email"
-                    type="email"
-                    v-model:value="credentials.email"
-                />
+                    <label for="password">Password</label>
+                    <TextField
+                        id="password"
+                        type="password"
+                        v-model:value="credentials.password"
+                    />
 
-                <label for="password">Password</label>
-                <TextField
-                    id="password"
-                    type="password"
-                    v-model:value="credentials.password"
-                />
+                    <TextButton id="signin-button">Sign In</TextButton>
+                </form>
 
-                <TextButton id="signin-button">Sign In</TextButton>
-            </form>
+                <p id="signup-text">
+                    Don't have an account?
+                    <router-link
+                        id="signup-link"
+                        :to="{ name: 'SignUp', replace: true }"
+                    >
+                        Sign Up
+                    </router-link>
+                </p>
+                <section id="alternative-signup-methods">
+                    <TextButton @click="onSignInWithProvider('google')"
+                        >Sign in with Google
+                    </TextButton>
+                </section>
+            </div>
+        </section>
 
-            <p id="signup-text">
-                Don't have an account?
-                <router-link
-                    id="signup-link"
-                    :to="{ name: 'SignUp', replace: true }"
-                >
-                    Sign Up
-                </router-link>
-            </p>
-        </div>
-    </section>
-
-    <section id="alternative-signup-methods">
-        <TextButton @click="onSignInWithProvider('google')"
-            >Sign in with Google
-        </TextButton>
-    </section>
+        
+    </div>
+    <div id="two-thirds-nothing">
+        <h1 style="font-size: 2.5rem;">Read That Omega</h1>
+        <div style="text-align: center;">Your place in virtual space</div>
+    </div>
+</main>
 </template>
 
 <style scoped lang="scss">
@@ -85,11 +93,30 @@
         font-size: 1.125rem;
     }
 
+    main {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-items: center;
+        height: 100vh;
+        > #sign-in-third {
+            flex: 1;
+            border-right: white solid;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+        > #two-thirds-nothing {
+            flex: 3;
+        }
+    }
+
     h1 {
-        padding: 0 1rem;
         font-size: 1.5rem;
         letter-spacing: 1px;
         font-weight: 400;
+        text-align: center;
     }
 
     #signin-form {
@@ -135,8 +162,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1rem;
         margin-bottom: 3rem;
+        margin-top: 1rem;
 
         button {
             background-color: $secondaryContainer;

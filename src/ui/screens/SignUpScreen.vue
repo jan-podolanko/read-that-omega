@@ -35,43 +35,51 @@
 </script>
 
 <template>
-    <h1>Enter your credentials to sign in</h1>
+    <main>
+    <div id="sign-in-third">
+        <section id="signup-form">
+            <h1>Enter your credentials to sign up</h1>
+            <div>
+                <form action="#" @submit.prevent="onSignUp">
+                    <label for="email">Email</label>
+                    <TextField
+                        id="email"
+                        type="email"
+                        v-model:value="credentials.email"
+                    />
 
-    <section id="signup-form">
-        <div>
-            <form action="#" @submit.prevent="onSignUp">
-                <label for="email">Email</label>
-                <TextField
-                    id="email"
-                    type="email"
-                    v-model:value="credentials.email"
-                />
+                    <label for="nickname">Nickname</label>
+                    <TextField
+                        id="nickname"
+                        type="text"
+                        v-model:value="credentials.nickname"
+                    />
 
-                <label for="nickname">Nickname</label>
-                <TextField
-                    id="nickname"
-                    type="text"
-                    v-model:value="credentials.nickname"
-                />
+                    <label for="password">Password</label>
+                    <TextField
+                        id="password"
+                        type="password"
+                        v-model:value="credentials.password"
+                    />
 
-                <label for="password">Password</label>
-                <TextField
-                    id="password"
-                    type="password"
-                    v-model:value="credentials.password"
-                />
+                    <TextButton id="signup-button">Sign Up</TextButton>
+                </form>
+                <p id="signin-text">
+                    Already have an account?
+                    <router-link id="signin-link" :to="{ name: 'SignIn', replace: true }">
+                        Sign In
+                    </router-link>
+                </p>
+            </div>
+        </section>
 
-                <TextButton id="signup-button">Sign Up</TextButton>
-            </form>
-        </div>
-    </section>
-
-    <p id="signin-text">
-        Already have an account?
-        <router-link id="signin-link" :to="{ name: 'SignIn', replace: true }">
-            Sign In
-        </router-link>
-    </p>
+        
+    </div>
+    <div id="two-thirds-nothing">
+        <h1 style="font-size: 2.5rem;">Read That Omega</h1>
+        <div style="text-align: center;">Your place in virtual space</div>
+    </div>
+</main>
 </template>
 
 <style scoped lang="scss">
@@ -79,12 +87,32 @@
         font-size: 1.125rem;
     }
 
+    main {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-items: center;
+        height: 100vh;
+        > #sign-in-third {
+            flex: 1;
+            border-right: white solid;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+        > #two-thirds-nothing {
+            flex: 3;
+        }
+    }
+    
     h1 {
-        padding: 0 1rem;
         font-size: 1.5rem;
         letter-spacing: 1px;
         font-weight: 400;
+        text-align: center;
     }
+    
 
     #signup-form {
         padding: 0 1rem;
