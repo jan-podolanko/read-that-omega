@@ -9,6 +9,7 @@ import {useUserStore} from "../../stores/user";
 import TextButton from "../components/TextButton.vue";
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
+import PostSingular from "../components/PostSingular.vue";
 
 const userStore = useUserStore();
 const toast = useToast();
@@ -258,49 +259,9 @@ async function changePass() {
         </section>
 
         <section class="post" v-for="post in userPosts">
-            <header class="post-header">
-                <div>
-                    <span>{{ post.title }}</span> <br/>
-                    <div v-if="post.location !== null" class="location-header">
-                        <span class="material-icons"> pin_drop </span>
-                        <span>{{ post.location }}</span>
-                    </div>
-                    <div class="subject-header">
-                    </div>
-                </div>
-                <time :datetime="post.date.toISOString()"
-                >{{ useDateFormat(post.date, "D.MM.YY").value }}<br/>@
-                    {{ useDateFormat(post.date, "HH:mm").value }}
-                    <p>Subject: {{ post.subject ? post.subject : "not defined" }}</p>
-                </time>
-            </header>
-            <div class="post-body">
-                <p>{{ post.body }}</p>
-            </div>
-            <div v-if="post.imageURL !== null" class="post-image">
-                <img :src="`${post.imageURL}`"/>
-            </div>
-            <div class="post-actions">
-          <span class="material-icons delete-post-button" @click="deletePostHandler(post)">
-            delete
-          </span>
-                <span style="margin-bottom: 2px; margin-right: 3px">{{
-                    post.likeAmount
-                    }}</span>
-            <span class="material-icons like-button" @click="likePost(post)">{{
-                            post.didUserLike ? "favorite" : "favorite_outlined"
-                            }}</span>
-            <div style="flex-grow: 1"></div>
-            <span class="post-author-username">{{
-                            post.author.displayName
-                            }}</span>
-            <img
-                    class="post-author-photo"
-                    :src="post.author.photoURL"
-                    alt=""
-            />
-        </div>
-        </section>
+                <PostSingular :post="post"/>
+            </section>
+
     </main>
 </template>
 
@@ -497,5 +458,7 @@ a {
       padding-top: 1rem;
       border: 1px black;
     }
+
+
 
 </style>
