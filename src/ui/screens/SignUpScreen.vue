@@ -83,6 +83,12 @@
 </template>
 
 <style scoped lang="scss">
+
+@media only screen and (max-width: 1000px) {
+    #two-thirds-nothing {
+        display: none;
+    }
+}
     * {
         font-size: 1.125rem;
     }

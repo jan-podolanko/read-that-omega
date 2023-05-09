@@ -70,9 +70,9 @@ defineEmits(["onPostClick"])
             <span style="margin-bottom: 2px; margin-right: 3px">{{
                 post.likeAmount
                 }}</span>
-            <span class="material-icons like-button" @click="likePost(post)">{{
-                post.didUserLike ? "favorite" : "favorite_outlined"
-                }}</span>
+            <span class="material-icons like-button" :class="{liked:post.didUserLike}" @click="likePost(post)">
+                        favorite
+                        </span>
             <div style="flex-grow: 1"></div>
             <span class="post-author-username">{{
                 post.author.displayName
@@ -171,6 +171,10 @@ a {
 
 }
 
+.liked {
+  color: lighten($surface,30%);
+}
+
 #comments > section {
   margin: 10px;
 }
@@ -212,7 +216,7 @@ button.delete-post-button {
 }
 
 img {
-  max-width: 50%;
+  max-height: 50vh;
 }
 
 
