@@ -25,6 +25,7 @@ const state: { posts: Post[], subjects: Array<any> | null, comments: Comment[] }
 });
 const filter = ref('');
 const search = ref(false);
+const inProgress = ref(false)
 const searchTerm = ref('');
 let currentPost: Post | any = ref(null);
 
@@ -95,9 +96,9 @@ const filteredPosts = computed(() => {
     if (filter.value != "") {
         return state.posts?.filter((post: {
             subject: String;
-        }) => post.subject == filter.value).filter((post) => post.title.toLowerCase().includes(searchTerm.value))
+        }) => post.subject == filter.value).filter((post) => post.title.toLowerCase().includes(searchTerm.value.toLowerCase()))
     } else {
-        return state.posts.filter((post) => post.title.toLowerCase().includes(searchTerm.value))
+        return state.posts.filter((post) => post.title.toLowerCase().includes(searchTerm.value.toLowerCase()))
     }
 });
 
@@ -117,16 +118,19 @@ async function createComment(post: Post) {
         errorHandler("Comment cannot be empty");
         return;
     }
+    inProgress.value = true
     const isSuccess = await postsStore.createComment({
         postid,
         body,
     });
 
     if (isSuccess) {
+      inProgress.value = false
         postsStore.getPostComments(post.id).then((comments) => {
             state.comments = comments;
         })
     }
+    comment.body = "";
 }
 
 function errorHandler(message: String, duration: number = 200) {
@@ -154,7 +158,7 @@ function errorHandler(message: String, duration: number = 200) {
                         <span class="material-icons header-icons" style="flex: 3" @click="signOutHandler">logout</span>
                     </div>
                 </header>
-                <TextField v-if="search" v-model:value="searchTerm"></TextField>
+                <TextField v-if="search" v-model:value="searchTerm" class="search-bar"></TextField>
                 <select v-model="filter" id="subject-filter">
                     <option value="">All subjects</option>
                     <option v-for="subject in state.subjects">{{ subject.subject }}</option>
@@ -181,7 +185,7 @@ function errorHandler(message: String, duration: number = 200) {
                         v-model.trim="comment.body"
                 >
                 <section class="button-row">
-                    <TextButton>Post</TextButton>
+                    <TextButton class="post-button" :disabled="inProgress">Post</TextButton>
                 </section>
             </form>
 
@@ -198,9 +202,9 @@ function errorHandler(message: String, duration: number = 200) {
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     comment.likeAmount
                     }}</span>
-                    <span class="material-icons like-button" @click="likeComment(comment)">{{
-                        comment.didUserLike ? "favorite" : "favorite_outlined"
-                        }}</span>
+                    <span class="material-icons like-button" :class="{liked:comment.didUserLike}" @click="likeComment(comment)">
+                        favorite
+                        </span>
                     <div style="flex-grow: 1"></div>
                     <span class="post-author-username">{{
                         comment.author.displayName
@@ -214,9 +218,59 @@ function errorHandler(message: String, duration: number = 200) {
             </section>
         </div>
     </main>
+
+    <main id="mobilescreen">
+        <div id="postsMobile">
+            <header class="main-header">
+                <h2>ReadThat</h2>
+                <div id="icons">
+                    <span class="material-icons header-icons" id="search-button" style="flex: 2"
+                          @click="()=>search = !search">search</span>
+                    <router-link to="createpost" style="flex: 4">
+                        <span class="material-icons header-icons">add_circle</span>
+                    </router-link>
+                    <router-link to="profile" style="flex: 1">
+                        <span class="material-icons header-icons">manage_accounts</span>
+                    </router-link>
+                    <span class="material-icons header-icons" style="flex: 3" @click="signOutHandler">logout</span>
+                </div>
+            </header>
+            <TextField v-if="search" v-model:value="searchTerm"></TextField>
+            <select v-model="filter" id="subject-filter">
+                <option value="">All subjects</option>
+                <option v-for="subject in state.subjects">{{ subject.subject }}</option>
+            </select>
+            <section class="post" v-for="post in filteredPosts">
+                    <PostSingular :post="post" @onPostClick="router.push('/post/'+ post.id)" />
+            </section>
+        </div>
+    </main>
+
+
 </template>
 
 <style scoped lang="scss">
+
+@media only screen and (max-width: 1000px) {
+  #homescreen {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 1000px) {
+  #mobilescreen {
+    display: none;
+  }
+}
+
+.post-button:disabled {
+  background-color: grey;
+}
+
+.search-bar{
+    background-color: $surfaceVariant;
+    width: 100%;
+}
 
 form {
   border-radius: 8px;
@@ -229,11 +283,6 @@ form {
   overflow-wrap: break-word;
   margin: 10px;
   display: flex;
-}
-
-input {
-  background-color: $onSurfaceVariant;
-  box-shadow: 0 0 10px 5px rgba(black, 0.1);
 }
 
 .button-row {
@@ -283,6 +332,10 @@ main {
   }
 }
 
+.liked {
+    color: lighten($surface,30%);
+}
+
 select {
   font-weight: bold;
 
@@ -317,6 +370,14 @@ a {
 }
 
 #posts {
+  padding: 0 0.5rem 2rem 0.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+#postsMobile {
   padding: 0 0.5rem 2rem 0.5rem;
   overflow-y: auto;
   display: flex;
