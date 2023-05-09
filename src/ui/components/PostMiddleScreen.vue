@@ -170,6 +170,7 @@ const postsStore = usePostsStore();
   }
 }
 
+
 .post-image {
   display: flex;
   width: fit-content;
@@ -189,8 +190,5 @@ const postsStore = usePostsStore();
   }
 }
 
-.post-body {
-  background-color: $surfaceVariant
-}
 
 </style>
