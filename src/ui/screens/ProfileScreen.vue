@@ -7,8 +7,8 @@ import {Post} from "../../model/Post";
 import {useDateFormat} from "@vueuse/core";
 import {useUserStore} from "../../stores/user";
 import TextButton from "../components/TextButton.vue";
-import { useRouter } from "vue-router";
-import { useToast } from "vue-toastification";
+import {useRouter} from "vue-router";
+import {useToast} from "vue-toastification";
 import PostSingular from "../components/PostSingular.vue";
 
 const userStore = useUserStore();
@@ -20,13 +20,13 @@ onBeforeMount(() => {
         state.posts = posts;
     });
     userStore.getSubjects().then(subjects => {
-      state.subjects = subjects;
+        state.subjects = subjects;
     });
     userStore.getAllNicknames().then(nicknames => {
-      state.nicknames = nicknames;
+        state.nicknames = nicknames;
     });
     userStore.getUser(userStore.userProfile!!.uid).then(admin => {
-      state.admin = admin;
+        state.admin = admin;
     });
 });
 const postsStore = usePostsStore();
@@ -34,7 +34,12 @@ const postsStore = usePostsStore();
 
 let isAdmin = false;
 
-const state: { posts: Post[], subjects: Array<any> | any, nicknames: Array<any> | any, admin: Array<any> | any} = reactive({
+const state: {
+    posts: Post[],
+    subjects: Array<any> | any,
+    nicknames: Array<any> | any,
+    admin: Array<any> | any
+} = reactive({
     posts: [],
     subjects: [],
     nicknames: [],
@@ -47,15 +52,14 @@ const router = useRouter();
 
 const subjectAddition = reactive({subject: ""});
 const changeUser = reactive({
-  nickname: "",
-  password: "",
+    nickname: "",
+    password: "",
 });
 
 const changePassword = reactive({
-  newPassword0: "",
-  newPassword1: "",
+    newPassword0: "",
+    newPassword1: "",
 });
-
 
 
 function signOutHandler() {
@@ -81,34 +85,32 @@ async function getSubjects() {
     try {
         const subjects = await userStore.getSubjects();
         return subjects;
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e);
         return false;
     }
 }
 
 function errorHandler(message: String, duration: number = 200) {
-        toast.error(message);
-        navigator.vibrate(duration);
-    }
+    toast.error(message);
+    navigator.vibrate(duration);
+}
 
 async function addSubject() {
     if (subjectAddition.subject.length == 0) {
-            errorHandler("Subject cannot be empty");
+        errorHandler("Subject cannot be empty");
+        return;
+    }
+    for (let i = 0; i < state.subjects.length; i++) {
+        if (state.subjects[i].subject == subjectAddition.subject) {
+            errorHandler("Subject already added");
             return;
         }
-    for (let i = 0; i < state.subjects.length; i++) {
-      if (state.subjects[i].subject == subjectAddition.subject) {
-        errorHandler("Subject already added");
-        return;
-      }
     }
     try {
-        userStore.addSubject(subjectAddition.subject).then(()=>router.go(0));
+        userStore.addSubject(subjectAddition.subject).then(() => router.go(0));
         return true;
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e);
         return false;
     }
@@ -116,10 +118,9 @@ async function addSubject() {
 
 async function deleteSubject(id: string) {
     try {
-        userStore.deleteSubject(id).then(()=>router.go(0));
+        userStore.deleteSubject(id).then(() => router.go(0));
         return true;
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e);
         return false;
     }
@@ -141,48 +142,48 @@ async function deletePostHandler(post: Post) {
 }
 
 async function changeNickname() {
-  if (changeUser.nickname.length == 0 || changeUser.password.length == 0) {
-    errorHandler("Nickname and password cannot be empty")
-    return;
-  }
-  if (changeUser.nickname.length < 3) {
-    errorHandler("Nickname must be at least 3 characters long")
-    return;
-  }
-  for (let i = 0; i < state.nicknames.length; i++) {
-      if (state.nicknames[i].displayName == changeUser.nickname) {
-        errorHandler("Nickname already in use")
+    if (changeUser.nickname.length == 0 || changeUser.password.length == 0) {
+        errorHandler("Nickname and password cannot be empty")
         return;
-      }
     }
-  const isSuccess = await userStore.changeNickname(user?.uid, user?.email, changeUser.nickname, changeUser.password)
-  
-  if (isSuccess) {
-    router.go()
-    return true;
-  }
+    if (changeUser.nickname.length < 3) {
+        errorHandler("Nickname must be at least 3 characters long")
+        return;
+    }
+    for (let i = 0; i < state.nicknames.length; i++) {
+        if (state.nicknames[i].displayName == changeUser.nickname) {
+            errorHandler("Nickname already in use")
+            return;
+        }
+    }
+    const isSuccess = await userStore.changeNickname(user?.uid, user?.email, changeUser.nickname, changeUser.password)
+
+    if (isSuccess) {
+        router.go()
+        return true;
+    }
     errorHandler("Wrong password!")
 }
 
 async function changePass() {
-  if (changePassword.newPassword0.length == 0 || changePassword.newPassword1.length == 0) {
-    errorHandler("All forms must be filled in!")
-    return;
-  }
-  if (changePassword.newPassword0.length < 8) {
-    errorHandler("New password must be at least 8 characters long!")
-    return;
-  }
-  if (changePassword.newPassword0 != changePassword.newPassword1) {
-    errorHandler("Passwords do not match!")
-    return;
-  }
-  const isSuccess = await userStore.changePassword(changePassword.newPassword0, changePassword.oldPassword)
-  if (isSuccess) {
-    errorHandler("Password changed!")
-    return true;
-  }
-  errorHandler("Something wrong happend!")
+    if (changePassword.newPassword0.length == 0 || changePassword.newPassword1.length == 0) {
+        errorHandler("All forms must be filled in!")
+        return;
+    }
+    if (changePassword.newPassword0.length < 8) {
+        errorHandler("New password must be at least 8 characters long!")
+        return;
+    }
+    if (changePassword.newPassword0 != changePassword.newPassword1) {
+        errorHandler("Passwords do not match!")
+        return;
+    }
+    const isSuccess = await userStore.changePassword(changePassword.newPassword0, changePassword.oldPassword)
+    if (isSuccess) {
+        errorHandler("Password changed!")
+        return true;
+    }
+    errorHandler("Something wrong happend!")
 }
 
 
@@ -197,70 +198,70 @@ async function changePass() {
             <span>{{ user?.email }}</span
             ><br/>
             <button @click="signOutHandler">sign out</button>
-          </section>
-            <section class="profile-header" v-if="state.admin.admin == true">
-              <h1>Admin settings:</h1>
+        </section>
+        <section class="profile-header" v-if="state.admin.admin == true">
+            <h1>Admin settings:</h1>
             <form action="#" @submit.prevent="addSubject">
                 <TextField class="changeUser"
-                    id="Subject"
-                    placeholder="Add subject.."
-                    maxlength="20"
-                    v-model:value="subjectAddition.subject"
+                           id="Subject"
+                           placeholder="Add subject.."
+                           maxlength="20"
+                           v-model:value="subjectAddition.subject"
                 />
                 <TextButton>Add subject</TextButton>
             </form>
             <div v-for="subject in state.subjects">
-              <div class="subject-name">
-                <div > {{ subject.subject }}</div> 
-                <span class="material-icons" @click="deleteSubject(subject.id)">delete</span>
-              </div>
+                <div class="subject-name">
+                    <div> {{ subject.subject }}</div>
+                    <span class="material-icons" @click="deleteSubject(subject.id)">delete</span>
+                </div>
             </div>
-          </section>
+        </section>
 
         <section class="profile-header" v-if="user?.providerData[0].providerId == 'password'">
-          <h1>Change nickname:</h1>
-          <form action="#" @submit.prevent="changeNickname()">
-            <TextField class="changeUser"
-                    id="Subject"
-                    placeholder="New nickname"
-                    v-model:value="changeUser.nickname"
+            <h1>Change nickname:</h1>
+            <form action="#" @submit.prevent="changeNickname()">
+                <TextField class="changeUser"
+                           id="Subject"
+                           placeholder="New nickname"
+                           v-model:value="changeUser.nickname"
                 />
                 <TextField class="changeUser"
-                    id="Subject"
-                    placeholder="Password confirmation"
-                    type="password"
-                    v-model:value="changeUser.password"
+                           id="Subject"
+                           placeholder="Password confirmation"
+                           type="password"
+                           v-model:value="changeUser.password"
                 />
-            <TextButton style="margin: 1rem;">Change nickname</TextButton>
-          </form>
+                <TextButton style="margin: 1rem;">Change nickname</TextButton>
+            </form>
         </section>
 
         <section v-else class="profile-header">
-          <span>Users logged in using Google account cannot change their nickname and password</span>
+            <span>Users logged in using Google account cannot change their nickname and password</span>
         </section>
 
         <section class="profile-header" v-if="user?.providerData[0].providerId == 'password'">
-          <h1>Change password:</h1>
-          <form action="#" @submit.prevent="changePass()">
-            <TextField class="changeUser"
-                    id="Subject"
-                    placeholder="New password"
-                    type="password"
-                    v-model:value="changePassword.newPassword0"
+            <h1>Change password:</h1>
+            <form action="#" @submit.prevent="changePass()">
+                <TextField class="changeUser"
+                           id="Subject"
+                           placeholder="New password"
+                           type="password"
+                           v-model:value="changePassword.newPassword0"
                 />
                 <TextField class="changeUser"
-                    id="Subject"
-                    placeholder="Confirm new password"
-                    type="password"
-                    v-model:value="changePassword.newPassword1"
+                           id="Subject"
+                           placeholder="Confirm new password"
+                           type="password"
+                           v-model:value="changePassword.newPassword1"
                 />
-            <TextButton style="margin: 1rem;">Change password</TextButton>
-          </form>
+                <TextButton style="margin: 1rem;">Change password</TextButton>
+            </form>
         </section>
 
         <section class="post" v-for="post in userPosts">
-                <PostSingular :post="post"/>
-            </section>
+            <PostSingular :post="post"/>
+        </section>
 
     </main>
 </template>
@@ -369,12 +370,14 @@ a {
     > span {
       font-weight: 500;
       flex: 1;
+
       &:hover {
         cursor: pointer;
       }
     }
 
   }
+
   .post-image {
     display: flex;
     width: fit-content;
@@ -434,30 +437,30 @@ a {
 }
 
 .delete-post-button {
-            background-color: transparent;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            padding: 2px;
-            cursor: pointer;
+  background-color: transparent;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 2px;
+  cursor: pointer;
 
-          &:hover {
-            background-color: darkred;
-          }
-        }
-
-  .like-button:hover {
-    cursor: pointer;
+  &:hover {
+    background-color: darkred;
   }
-    
-  button.delete-post-button {
-    align-items: center;
-  }
+}
 
-    form {
-      padding-top: 1rem;
-      border: 1px black;
-    }
+.like-button:hover {
+  cursor: pointer;
+}
+
+button.delete-post-button {
+  align-items: center;
+}
+
+form {
+  padding-top: 1rem;
+  border: 1px black;
+}
 
 
 

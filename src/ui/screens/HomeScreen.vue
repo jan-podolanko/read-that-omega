@@ -11,7 +11,7 @@ import {useToast} from "vue-toastification";
 import TextButton from "../components/TextButton.vue";
 import PostSingular from "../components/PostSingular.vue";
 import PostMiddleScreen from "../components/PostMiddleScreen.vue";
-import { useRouter } from "vue-router";
+import {useRouter} from "vue-router";
 
 const postsStore = usePostsStore();
 const userStore = useUserStore();
@@ -37,13 +37,13 @@ const comment: {
 });
 
 onBeforeMount(() => {
-    
+
     postsStore.getPosts().then(posts => {
         state.posts = posts;
-        if(props.id){
-          currentPost = state.posts.find(post => post.id == props.id);
+        if (props.id) {
+            currentPost = state.posts.find(post => post.id == props.id);
         } else {
-          currentPost = state.posts[0];
+            currentPost = state.posts[0];
         }
     });
     userStore.getSubjects().then(subjects => {
@@ -52,7 +52,7 @@ onBeforeMount(() => {
 });
 
 const props = defineProps({
-  id: String,
+    id: String,
 })
 
 const auth = getAuth();
@@ -123,10 +123,10 @@ async function createComment(post: Post) {
     });
 
     if (isSuccess) {
-      postsStore.getPostComments(post.id).then((comments) => {
-        state.comments = comments;
-    })
-    } 
+        postsStore.getPostComments(post.id).then((comments) => {
+            state.comments = comments;
+        })
+    }
 }
 
 function errorHandler(message: String, duration: number = 200) {
@@ -139,26 +139,26 @@ function errorHandler(message: String, duration: number = 200) {
 <template>
     <main id="homescreen">
         <div id="posts">
-          <div>
-            <header class="main-header">
-                <h2>ReadThat</h2>
-                <div id="icons">
+            <div>
+                <header class="main-header">
+                    <h2>ReadThat</h2>
+                    <div id="icons">
                     <span class="material-icons header-icons" id="search-button" style="flex: 2"
                           @click="()=>search = !search">search</span>
-                    <router-link to="createpost" style="flex: 4">
-                        <span class="material-icons header-icons">add_circle</span>
-                    </router-link>
-                    <router-link to="profile" style="flex: 1">
-                        <span class="material-icons header-icons">manage_accounts</span>
-                    </router-link>
-                    <span class="material-icons header-icons" style="flex: 3" @click="signOutHandler">logout</span>
-                </div>
-              </header>
-              <TextField v-if="search" v-model:value="searchTerm"></TextField>
-              <select v-model="filter" id="subject-filter">
-                  <option value="">All subjects</option>
-                  <option v-for="subject in state.subjects">{{ subject.subject }}</option>
-              </select>
+                        <router-link to="createpost" style="flex: 4">
+                            <span class="material-icons header-icons">add_circle</span>
+                        </router-link>
+                        <router-link to="profile" style="flex: 1">
+                            <span class="material-icons header-icons">manage_accounts</span>
+                        </router-link>
+                        <span class="material-icons header-icons" style="flex: 3" @click="signOutHandler">logout</span>
+                    </div>
+                </header>
+                <TextField v-if="search" v-model:value="searchTerm"></TextField>
+                <select v-model="filter" id="subject-filter">
+                    <option value="">All subjects</option>
+                    <option v-for="subject in state.subjects">{{ subject.subject }}</option>
+                </select>
             </div>
             <section class="post" v-for="post in filteredPosts">
                 <PostSingular :post="post" @onPostClick="getComments(post)"/>

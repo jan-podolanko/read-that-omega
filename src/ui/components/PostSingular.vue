@@ -133,6 +133,8 @@ a {
   letter-spacing: 1px;
 }
 
+
+
 .post-author-photo {
   min-width: 24px;
   max-width: 24px;
@@ -212,8 +214,6 @@ button.delete-post-button {
 }
 
 img {
-  max-width: 50%;
+  max-height: 50vh;
 }
-
-
 </style>
