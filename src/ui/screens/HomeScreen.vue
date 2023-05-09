@@ -95,9 +95,9 @@ const filteredPosts = computed(() => {
     if (filter.value != "") {
         return state.posts?.filter((post: {
             subject: String;
-        }) => post.subject == filter.value).filter((post) => post.title.toLowerCase().includes(searchTerm.value))
+        }) => post.subject == filter.value).filter((post) => post.title.toLowerCase().includes(searchTerm.value.toLowerCase()))
     } else {
-        return state.posts.filter((post) => post.title.toLowerCase().includes(searchTerm.value))
+        return state.posts.filter((post) => post.title.toLowerCase().includes(searchTerm.value.toLowerCase()))
     }
 });
 
@@ -154,7 +154,7 @@ function errorHandler(message: String, duration: number = 200) {
                         <span class="material-icons header-icons" style="flex: 3" @click="signOutHandler">logout</span>
                     </div>
                 </header>
-                <TextField v-if="search" v-model:value="searchTerm"></TextField>
+                <TextField v-if="search" v-model:value="searchTerm" class="search-bar"></TextField>
                 <select v-model="filter" id="subject-filter">
                     <option value="">All subjects</option>
                     <option v-for="subject in state.subjects">{{ subject.subject }}</option>
@@ -259,6 +259,10 @@ function errorHandler(message: String, duration: number = 200) {
   }
 }
 
+.search-bar{
+    background-color: $surfaceVariant;
+    width: 100%;
+}
 
 form {
   border-radius: 8px;
@@ -271,11 +275,6 @@ form {
   overflow-wrap: break-word;
   margin: 10px;
   display: flex;
-}
-
-input {
-  background-color: $onSurfaceVariant;
-  box-shadow: 0 0 10px 5px rgba(black, 0.1);
 }
 
 .button-row {
