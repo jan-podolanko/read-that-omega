@@ -71,9 +71,9 @@ const postsStore = usePostsStore();
                 <span style="margin-bottom: 2px; margin-right: 3px">{{
                     post.likeAmount
                     }}</span>
-                    <span class="material-icons like-button" @click="likePost(post)">{{
-                        post.didUserLike ? "favorite" : "favorite_outlined"
-                        }}</span>
+                    <span class="material-icons like-button" :class="{liked:post.didUserLike}" @click="likePost(post)">
+                        favorite
+                        </span>
                 </div>
             </div>
         </header>
@@ -145,6 +145,9 @@ const postsStore = usePostsStore();
   cursor: pointer;
 }
 
+.liked {
+  color: lighten($surface,30%);
+}
 
 .post-author-photo {
   margin: 0 0.5rem 1rem 0;

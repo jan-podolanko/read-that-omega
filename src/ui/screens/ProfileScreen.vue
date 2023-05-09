@@ -191,6 +191,9 @@ async function changePass() {
 
 <template>
     <main id="posts">
+        <header>
+            <router-link to="/Home"><h2>ReadThat</h2></router-link>
+        </header>
         <section class="profile-header">
             <img :src="`${user!!.photoURL}`"/><br/>
             <span>{{ user?.displayName }}</span
@@ -267,23 +270,26 @@ async function changePass() {
 </template>
 
 <style scoped lang="scss">
-a {
-  background-color: $surfaceVariant;
-  color: rgba($onSurfaceVariant, 0.7);
-  border: none;
-  border-radius: 24px;
-  padding: 1rem;
-  text-decoration: none;
-  font-size: 0.8rem;
 
-  &:hover {
-    cursor: pointer;
-  }
+@media only screen and (min-width: 1000px) {
+    main {
+        width: 50%;
+    }
+}
+
+main {
+  justify-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+}
+
+a {
+  padding: 0.5rem;
 }
 
 #posts {
-  padding: 1rem 0.5rem 2rem 0.5rem;
-  margin-top: 1rem;
+  padding: 0 0.5rem 2rem 1rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -461,7 +467,6 @@ form {
   padding-top: 1rem;
   border: 1px black;
 }
-
 
 
 </style>
