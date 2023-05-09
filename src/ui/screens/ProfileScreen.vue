@@ -156,10 +156,11 @@ async function changeNickname() {
             return;
         }
     }
+    //@ts-ignore
     const isSuccess = await userStore.changeNickname(user?.uid, user?.email, changeUser.nickname, changeUser.password)
 
     if (isSuccess) {
-        router.go()
+        router.go(0);
         return true;
     }
     errorHandler("Wrong password!")
@@ -178,7 +179,7 @@ async function changePass() {
         errorHandler("Passwords do not match!")
         return;
     }
-    const isSuccess = await userStore.changePassword(changePassword.newPassword0, changePassword.oldPassword)
+    const isSuccess = await userStore.changePassword(changePassword.newPassword0)
     if (isSuccess) {
         errorHandler("Password changed!")
         return true;

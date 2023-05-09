@@ -28,6 +28,7 @@ export const useUserStore = defineStore("user", () => {
     const userProfile: Ref<User | null> = ref(null);
     auth.onAuthStateChanged(user => {
         isUserSignedIn.value = !!user;
+        //@ts-ignore
         userProfile.value = user as User;
     });
 
@@ -83,13 +84,12 @@ export const useUserStore = defineStore("user", () => {
           return false;
         }
       }
-
-      async function changePassword(newPassword: string, password: string): Promise<boolean> {
+      async function changePassword(newPassword: string): Promise<boolean> {
         try {
           firebase.initializeApp(firebaseConfig);
           var db = firebase.firestore();
           const user = firebase.auth().currentUser;
-          await user.updatePassword(newPassword)
+          await user?.updatePassword(newPassword)
       
           return true;
         } catch (e) {
