@@ -214,9 +214,91 @@ function errorHandler(message: String, duration: number = 200) {
             </section>
         </div>
     </main>
+
+    <main style="display: hidden;" id="mobilescreen">
+        <div id="postsMobile">
+        
+
+          <header class="main-header">
+                <h2>ReadThat</h2>
+                <div id="icons">
+                    <span class="material-icons header-icons" id="search-button" style="flex: 2"
+                          @click="()=>search = !search">search</span>
+                    <router-link to="createpost" style="flex: 4">
+                        <span class="material-icons header-icons">add_circle</span>
+                    </router-link>
+                    <router-link to="profile" style="flex: 1">
+                        <span class="material-icons header-icons">manage_accounts</span>
+                    </router-link>
+                    <span class="material-icons header-icons" style="flex: 3" @click="signOutHandler">logout</span>
+                </div>
+              </header>
+              <TextField v-if="search" v-model:value="searchTerm"></TextField>
+              <select v-model="filter" id="subject-filter">
+                  <option value="">All subjects</option>
+                  <option v-for="subject in state.subjects">{{ subject.subject }}</option>
+              </select>
+
+          <section class="post" v-for="post in filteredPosts">
+            <header class="post-header">
+                <div>
+                  <router-link :to="{ name: 'postid', params: { id: post.id } }">
+                    <span>{{ post.title }}</span> <br/>
+                    <div v-if="post.location !== null" class="location-header">
+                        <span class="material-icons"> pin_drop </span>
+                        <span>{{ post.location }}</span>
+                    </div>
+                  </router-link>
+                    <div class="subject-header">
+                    </div>
+                </div>
+                <time :datetime="post.date.toISOString()"
+                >{{ useDateFormat(post.date, "D.MM.YY").value }}<br/>@
+                    {{ useDateFormat(post.date, "HH:mm").value }}
+                    <p>Subject: {{ post.subject ? post.subject : "not defined" }}</p>
+                </time>
+            </header>
+            <div class="post-body">
+                <p>{{ post.body }}</p>
+            </div>
+            <div v-if="post.imageURL !== null" class="post-image">
+                <img :src="`${post.imageURL}`"/>
+            </div>
+            <div class="post-actions">
+          <span class="material-icons delete-post-button" @click="deletePostHandler(post)">
+            delete
+          </span>
+                <span style="margin-bottom: 2px; margin-right: 3px">{{
+                    post.likeAmount
+                    }}</span>
+            <span class="material-icons like-button" @click="likePost(post)">{{
+                            post.didUserLike ? "favorite" : "favorite_outlined"
+                            }}</span>
+            <div style="flex-grow: 1"></div>
+            <span class="post-author-username">{{
+                            post.author.displayName
+                            }}</span>
+            <img
+                    class="post-author-photo"
+                    :src="post.author.photoURL"
+                    alt=""
+            />
+        </div>
+        </section>
+
+      </div>
+    </main>
+
+
 </template>
 
 <style scoped lang="scss">
+
+@media only screen and (max-width: 1000px) {
+  #homescreen {
+    display: none;
+  }
+}
 
 form {
   border-radius: 8px;
@@ -317,6 +399,14 @@ a {
 }
 
 #posts {
+  padding: 0 0.5rem 2rem 0.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+#postsMobile {
   padding: 0 0.5rem 2rem 0.5rem;
   overflow-y: auto;
   display: flex;
