@@ -25,6 +25,7 @@ const state: { posts: Post[], subjects: Array<any> | null, comments: Comment[] }
 });
 const filter = ref('');
 const search = ref(false);
+const inProgress = ref(false)
 const searchTerm = ref('');
 let currentPost: Post | any = ref(null);
 
@@ -117,17 +118,19 @@ async function createComment(post: Post) {
         errorHandler("Comment cannot be empty");
         return;
     }
+    inProgress.value = true
     const isSuccess = await postsStore.createComment({
         postid,
         body,
     });
 
     if (isSuccess) {
+      inProgress.value = false
         postsStore.getPostComments(post.id).then((comments) => {
             state.comments = comments;
-            router.go(0)
         })
     }
+    comment.body = "";
 }
 
 function errorHandler(message: String, duration: number = 200) {
@@ -175,14 +178,14 @@ function errorHandler(message: String, duration: number = 200) {
 
         <div id="comments">
             <h1 style="padding: 1rem;">Comments:</h1>
-            <form v-if="currentPost" action="#" @submit.prevent="createComment(currentPost)">
+            <form v-if="currentPost"  action="#" @submit.prevent="createComment(currentPost)">
                 <input
                         placeholder="Add comment..."
                         maxlength="400"
                         v-model.trim="comment.body"
                 >
                 <section class="button-row">
-                    <TextButton>Post</TextButton>
+                    <TextButton class="post-button" :disabled="inProgress">Post</TextButton>
                 </section>
             </form>
 
@@ -258,6 +261,10 @@ function errorHandler(message: String, duration: number = 200) {
   #mobilescreen {
     display: none;
   }
+}
+
+.post-button:disabled {
+  background-color: grey;
 }
 
 .search-bar{
