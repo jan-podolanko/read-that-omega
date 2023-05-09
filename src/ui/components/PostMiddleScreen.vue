@@ -81,7 +81,7 @@ const postsStore = usePostsStore();
             <img alt="Post image" :src="`${post.imageURL}`"/>
         </div>
         <div class="post-body">
-            <p>{{ post.body }}</p>
+            <p style="overflow-wrap: break-word;">{{ post.body }}</p>
         </div>
     </div>
 </template>

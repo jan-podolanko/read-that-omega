@@ -43,7 +43,7 @@ defineEmits(["onPostClick"])
     <div class="jan">
         <header class="post-header" @click="$emit('onPostClick')">
             <div>
-                <span class="post-title">{{ post.title }}</span> <br/>
+                <span style="word-break: break-all;">{{ post.title }}</span> <br/>
                 <div v-if="post.location !== null" class="location-header">
                     <span class="material-icons"> pin_drop </span>
                     <span>{{ post.location }}</span>
@@ -154,7 +154,7 @@ a {
 }
 
 .post-title {
-  overflow-wrap: break-word;
+  text-overflow: ellipsis;
 }
 
 .post-image {
