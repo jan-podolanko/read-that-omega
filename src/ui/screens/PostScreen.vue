@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onBeforeMount, reactive, computed} from "vue";
+import {onBeforeMount, reactive, computed, ref} from "vue";
 import {usePostsStore} from "../../stores/posts";
 import {Post} from "../../model/Post";
 import {useDateFormat} from "@vueuse/core";
@@ -13,6 +13,7 @@ import PostMiddleScreen from "../components/PostMiddleScreen.vue";
 const postsStore = usePostsStore();
 const toast = useToast();
 const router = useRouter();
+const inProgress = ref(false)
 
 const state: { posts: Post[], comments: Comment[] } = reactive({
     posts: [],
@@ -75,6 +76,8 @@ function errorHandler(message: String, duration: number = 200) {
 async function createComment() {
     const body = comment.body.trim();
     const postid = props.id
+    comment.body = "";
+    inProgress.value = true
     if (body.length == 0) {
         errorHandler("Comment cannot be empty");
         return;
@@ -83,9 +86,12 @@ async function createComment() {
         postid,
         body,
     });
-
+    
     if (isSuccess) {
-        router.go(0);
+      inProgress.value = false
+      postsStore.getPostComments(props.id).then((comments) => {
+            state.comments = comments;
+        })
     }
 
 }
@@ -207,6 +213,10 @@ textarea {
     text-align: end;
     font-style: italic;
   }
+}
+
+.post-button:disabled {
+  background-color: grey;
 }
 
 .liked {

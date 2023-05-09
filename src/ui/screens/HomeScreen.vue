@@ -178,7 +178,7 @@ function errorHandler(message: String, duration: number = 200) {
 
         <div id="comments">
             <h1 style="padding: 1rem;">Comments:</h1>
-            <form v-if="currentPost"  action="#" @submit.prevent="createComment(currentPost)">
+            <form v-if="currentPost" action="#" @submit.prevent="createComment(currentPost)">
                 <input
                         placeholder="Add comment..."
                         maxlength="400"
