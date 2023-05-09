@@ -125,6 +125,7 @@ async function createComment(post: Post) {
     if (isSuccess) {
         postsStore.getPostComments(post.id).then((comments) => {
             state.comments = comments;
+            router.go()
         })
     }
 }

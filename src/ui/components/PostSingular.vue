@@ -104,6 +104,11 @@ a {
   }
 }
 
+.like-button:hover {
+  cursor: pointer;
+}
+
+
 .post-header {
   display: flex;
   justify-content: space-between;
