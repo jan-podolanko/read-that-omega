@@ -4,8 +4,10 @@
     import { reactive, toRaw } from "vue";
     import { useRouter } from "vue-router";
     import { useUserStore } from "../../stores/user";
+    import {useToast} from "vue-toastification";
 
     const router = useRouter();
+    const toast = useToast();
     const userStore = useUserStore();
 
     const credentials = reactive({
@@ -20,8 +22,17 @@
         const emailRegex =
             /[a-z\d][a-z\d-_.]*[a-z\d]+@[a-z\d][a-z\d-_.]*[a-z\d]\.[a-z]{2,}/gi;
         if (!emailRegex.test(cred.email)) return;
-        if (cred.nickname.length < 3) return;
-        if (cred.password.length < 8) return;
+        if (cred.nickname.length < 3) {
+            toast.error("Nickname must be at least 3 characters long!");
+            navigator.vibrate(200);
+            return;
+        }
+
+        if (cred.password.length < 8) {
+            toast.error("Password must be at least 3 characters long!");
+            navigator.vibrate(200);
+            return;
+        }
 
         const isSuccess = await userStore.signUpWithEmail(
             cred.email,
