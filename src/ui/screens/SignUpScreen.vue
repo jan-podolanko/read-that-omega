@@ -42,6 +42,11 @@
         if (isSuccess) {
             await router.replace({ name: "Home" });
         }
+        else {
+            toast.error("Error!");
+            navigator.vibrate(200);
+            return;
+        }
     }
 </script>
 
